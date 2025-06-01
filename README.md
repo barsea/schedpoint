@@ -74,3 +74,63 @@ SchedPointは、日々の生産性向上を目的としたWebアプリケーシ�
 ## 8. 開発環境構築手順 (ローカル)
 
 (今後、具体的な手順を記載予定)
+
+## 9. テーブル設計
+
+### users テーブル
+
+| Column             | Type    | Options                   |
+| ------------------ | ------- | ------------------------- |
+| id                 | integer | primary_key, null: false  |
+| name               | string  | null: false               |
+| email              | string  | null: false, unique: true |
+| encrypted_password | string  | null: false               |
+
+#### Association
+
+- has_many :plans
+- has_many :actuals
+
+### plans テーブル
+
+| Column      | Type       | Options                        |
+| ----------- | ---------- | ------------------------------ |
+| id          | integer    | primary_key, null: false       |
+| memo        | text       |                                |
+| start_time  | datetime   | null: false                    |
+| end_time    | datetime   | null: false                    |
+| category_id | references | null: false, foreign_key: true |
+| user_id     | references | null: false, foreign_key: true |
+
+#### Association
+
+- belongs_to :user
+- belongs_to :category
+
+### actuals テーブル
+
+| Column      | Type       | Options                        |
+| ----------- | ---------- | ------------------------------ |
+| id          | integer    | primary_key, null: false       |
+| memo        | text       |                                |
+| start_time  | datetime   | null: false                    |
+| end_time    | datetime   | null: false                    |
+| category_id | references | null: false, foreign_key: true |
+| user_id     | references | null: false, foreign_key: true |
+
+#### Association
+
+- belongs_to :user
+- belongs_to :category
+
+### categories テーブル
+
+| Column             | Type    | Options                   |
+| ------------------ | ------- | ------------------------- |
+| id                 | integer | primary_key, null: false  |
+| name               | string  | null: false, unique: true |
+
+#### Association
+
+- has_many :plans
+- has_many :actuals

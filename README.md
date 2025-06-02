@@ -99,8 +99,8 @@ SchedPointは、日々の生産性向上を目的としたWebアプリケーシ�
 | memo        | text       |                                |
 | start_time  | datetime   | null: false                    |
 | end_time    | datetime   | null: false                    |
-| category_id | references | null: false, foreign_key: true |
-| user_id     | references | null: false, foreign_key: true |
+| category_id | references | null: false, foreign_key: true(users.id) |
+| user_id     | references | null: false, foreign_key: true(categories.id) |
 
 #### Association
 
@@ -115,8 +115,8 @@ SchedPointは、日々の生産性向上を目的としたWebアプリケーシ�
 | memo        | text       |                                |
 | start_time  | datetime   | null: false                    |
 | end_time    | datetime   | null: false                    |
-| category_id | references | null: false, foreign_key: true |
-| user_id     | references | null: false, foreign_key: true |
+| category_id | references | null: false, foreign_key: true(users.id) |
+| user_id     | references | null: false, foreign_key: true(categories.id) |
 
 #### Association
 

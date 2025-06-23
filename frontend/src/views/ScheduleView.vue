@@ -2,6 +2,7 @@
   import Header from '../components/Header.vue'
   import TimeAxis from '../components/TimeAxis.vue'
   import ScheduleColumn from '../components/ScheduleColumn.vue'
+  import EventBlock from '../components/EventBlock.vue'
 </script>
 
 <template>

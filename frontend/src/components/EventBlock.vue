@@ -1,3 +1,3 @@
 <template>
-イベントブロック
+  イベントブロック
 </template>

@@ -1,3 +1,3 @@
 <template>
-時間軸
+  時間軸
 </template>

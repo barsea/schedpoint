@@ -7,13 +7,14 @@
 
 <template>
   <div>
-    <div>
+    <div class="w-full h-16 bg-sky-500 flex items-center justify-center text-white">
       <Header />
+      <p>← Headerコンポーネントの範囲 →</p>
     </div>
     <div>
       <TimeAxis />
       <ScheduleColumn />
-    <ScheduleColumn />
+      <ScheduleColumn />
     </div>
   </div>
 </template>

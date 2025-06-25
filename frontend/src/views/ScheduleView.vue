@@ -6,15 +6,20 @@
 </script>
 
 <template>
-  <div>
-    <div class="w-full h-16 bg-sky-500 flex items-center justify-center text-white">
+  <div class="flex flex-col items-center h-screen">
+    <div class="w-full max-w-[1900px] h-[100px] bg-indigo-500">
       <Header />
-      <p>← Headerコンポーネントの範囲 →</p>
     </div>
-    <div>
-      <TimeAxis />
-      <ScheduleColumn />
-      <ScheduleColumn />
+    <div class="flex flex-grow w-full max-w-[1900px]">
+      <div class="w-[100px] bg-lime-400">
+        <TimeAxis />
+      </div>
+      <div class="w-[900px] bg-sky-500">
+        <ScheduleColumn />
+      </div>
+      <div class="w-[900px] bg-sky-400">
+        <ScheduleColumn />
+      </div>
     </div>
   </div>
 </template>

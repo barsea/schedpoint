@@ -7,17 +7,17 @@
 
 <template>
   <div class="flex flex-col items-center h-screen">
-    <div class="w-full max-w-[1900px] h-[100px] bg-indigo-500">
+    <div class="w-full max-w-[1500px] h-[100px] bg-light-gray-blue">
       <Header />
     </div>
-    <div class="flex flex-grow w-full max-w-[1900px]">
+    <div class="flex flex-grow w-full max-w-[1500px]">
       <div class="w-[100px] bg-lime-400">
         <TimeAxis />
       </div>
-      <div class="w-[900px] bg-sky-500">
+      <div class="w-[700px] bg-sky-500">
         <ScheduleColumn />
       </div>
-      <div class="w-[900px] bg-sky-400">
+      <div class="w-[700px] bg-sky-400">
         <ScheduleColumn />
       </div>
     </div>

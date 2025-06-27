@@ -16,9 +16,7 @@
 </template>
 
 <script setup>
-// スクリプトが必要な場合はここに記述
 </script>
 
 <style scoped>
-/* 必要に応じてカスタムスタイルを記述 */
 </style>

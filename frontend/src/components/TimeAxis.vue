@@ -5,7 +5,9 @@
       :key="index"
       class="relative h-12 pr-2 text-right border-b border-gray-200"
     >
-      {{ text }}
+      <span class="relative -top-[12px]">
+        {{ text }}
+      </span>
     </div>
   </div>
 </template>

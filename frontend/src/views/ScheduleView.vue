@@ -1,15 +1,15 @@
 <template>
   <div class="flex flex-col items-center h-screen bg-[#f3f7ff]">
 
-    <div class="w-full max-w-[1500px] h-[100px] bg-light-gray-blue border-2 border-[#e1e7ee] flex-shrink-0">
+    <div class="w-full max-w-[1500px] h-[100px] bg-light-gray-blue border-2 border-slate-300 flex-shrink-0">
       <Header />
     </div>
 
-    <div class="flex flex-grow w-full max-w-[1500px] border-x-2 border-b-2 border-[#e1e7ee] overflow-y-auto">
+    <div class="flex flex-grow w-full max-w-[1500px] border-x-2 border-b-2 border-slate-300 overflow-y-auto">
       <div class="w-[100px] min-h-[1152px] flex-grow bg-white">
         <TimeAxis />
       </div>
-      <div class="w-[700px] min-h-[1152px] flex-grow bg-white border-x-2 border-[#e1e7ee]">
+      <div class="w-[700px] min-h-[1152px] flex-grow bg-white border-x-2 border-slate-300">
         <ScheduleColumn title="予定" />
       </div>
       <div class="w-[700px] min-h-[1152px] flex-grow bg-white">

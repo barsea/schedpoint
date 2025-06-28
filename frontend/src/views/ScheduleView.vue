@@ -9,11 +9,11 @@
       <div class="w-[100px] min-h-[1152px] flex-grow bg-white">
         <TimeAxis />
       </div>
-      <div class="w-[700px] min-h-[1152px] flex-grow bg-sky-500">
-        <ScheduleColumn />
+      <div class="w-[700px] min-h-[1152px] flex-grow bg-white border-x-2 border-[#e1e7ee]">
+        <ScheduleColumn title="予定" />
       </div>
-      <div class="w-[700px] min-h-[1152px] flex-grow bg-sky-400">
-        <ScheduleColumn />
+      <div class="w-[700px] min-h-[1152px] flex-grow bg-white">
+        <ScheduleColumn title="実績" />
       </div>
     </div>
 

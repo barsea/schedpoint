@@ -6,13 +6,13 @@
     </div>
 
     <div class="flex flex-grow w-full max-w-[1500px] border-x-2 border-b-2 border-slate-300 overflow-y-auto">
-      <div class="w-[100px] min-h-[1152px] flex-grow bg-white">
+      <div class="w-[100px] min-h-[1216px] flex-grow bg-white">
         <TimeAxis />
       </div>
-      <div class="w-[700px] min-h-[1152px] flex-grow bg-white border-x-2 border-slate-300">
+      <div class="w-[700px] min-h-[1216px] flex-grow bg-white border-x-2 border-slate-300">
         <ScheduleColumn title="予定" />
       </div>
-      <div class="w-[700px] min-h-[1152px] flex-grow bg-white">
+      <div class="w-[700px] min-h-[1216px] flex-grow bg-white">
         <ScheduleColumn title="実績" />
       </div>
     </div>

@@ -1,5 +1,6 @@
 <template>
   <div>
+    <div class="h-16 border-b-2 border-slate-300"></div>
     <div
       v-for="(text, index) in items"
       :key="index"

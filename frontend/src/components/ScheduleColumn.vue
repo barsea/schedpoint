@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2 class="h-16 text-center text-3xl border-b-2 border-slate-300 ">{{ title }}</h2>
+    <h2 class="flex items-center justify-center h-16 text-3xl border-b-2 border-slate-300">{{ title }}</h2>
   </div>
 </template>
 

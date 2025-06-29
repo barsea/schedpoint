@@ -5,7 +5,7 @@
       <Header />
     </div>
 
-    <div class="flex flex-grow w-full max-w-[1500px] border-x-2 border-b-2 border-slate-300 overflow-y-auto">
+    <div class="relative flex flex-grow w-full max-w-[1500px] border-x-2 border-b-2 border-slate-300 overflow-y-auto">
       <div class="w-[100px] min-h-[1216px] flex-grow bg-white">
         <TimeAxis />
       </div>
@@ -15,6 +15,8 @@
       <div class="w-[700px] min-h-[1216px] flex-grow bg-white">
         <ScheduleColumn title="実績" />
       </div>
+
+      <EventBlock :style="{ top: '200px', left: '150px', height: '96px', width: '690px' }" />
     </div>
 
   </div>

@@ -1,5 +1,7 @@
 <template>
-  イベントブロック
+  <div class="absolute inset-x-0 top-0 h-full bg-blue-200 opacity-75 z-10 p-2 rounded">
+    イベントブロック
+  </div>
 </template>
 
 <script setup>

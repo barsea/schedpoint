@@ -15,8 +15,6 @@
       <div class="w-[700px] min-h-[1216px] flex-grow bg-white">
         <ScheduleColumn title="実績" />
       </div>
-
-      <EventBlock :style="{ top: '200px', left: '150px', height: '96px', width: '690px' }" />
     </div>
 
   </div>
@@ -26,7 +24,6 @@
   import Header from '../components/Header.vue'
   import TimeAxis from '../components/TimeAxis.vue'
   import ScheduleColumn from '../components/ScheduleColumn.vue'
-  import EventBlock from '../components/EventBlock.vue'
 </script>
 
 <style scoped>

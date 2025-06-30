@@ -5,8 +5,7 @@
 </template>
 
 <script setup>
-  import Header from './components/Header.vue'
+import TheHeader from './components/TheHeader.vue'
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

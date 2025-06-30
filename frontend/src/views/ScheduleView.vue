@@ -2,7 +2,7 @@
   <div class="flex flex-col items-center h-screen bg-[#f3f7ff]">
 
     <div class="w-full max-w-[1500px] h-[100px] bg-light-gray-blue border-2 border-slate-300 flex-shrink-0">
-      <Header />
+      <TheHeader />
     </div>
 
     <div class="relative flex flex-grow w-full max-w-[1500px] border-x-2 border-b-2 border-slate-300 overflow-y-auto">
@@ -21,9 +21,9 @@
 </template>
 
 <script setup>
-  import Header from '../components/Header.vue'
-  import TimeAxis from '../components/TimeAxis.vue'
-  import ScheduleColumn from '../components/ScheduleColumn.vue'
+import TheHeader from '../components/TheHeader.vue'
+import TimeAxis from '../components/TimeAxis.vue'
+import ScheduleColumn from '../components/ScheduleColumn.vue'
 </script>
 
 <style scoped>

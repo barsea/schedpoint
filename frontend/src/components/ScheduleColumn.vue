@@ -1,57 +1,14 @@
 <script setup>
 import EventBlock from './EventBlock.vue'
 
+// 親からeventsデータを受け取るようにPropsを定義
 defineProps({
   title: String,
+  events: {
+    type: Array,
+    default: () => [], // デフォルト値として空の配列を設定
+  },
 })
-
-// --- イベントのモックデータ ---
-const events = [
-  {
-    id: 1,
-    category: '開発',
-    startTime: new Date('2025-06-26T09:00:00'),
-    endTime: new Date('2025-06-26T10:45:00'),
-  },
-  {
-    id: 2,
-    category: '休憩',
-    startTime: new Date('2025-06-26T12:00:00'),
-    endTime: new Date('2025-06-26T12:30:00'),
-  },
-  {
-    id: 3,
-    category: '学習',
-    startTime: new Date('2025-06-26T14:00:00'),
-    endTime: new Date('2025-06-26T16:00:00'),
-  },
-  {
-    id: 4,
-    category: 'ミーティング',
-    startTime: new Date('2025-06-26T08:00:00'),
-    endTime: new Date('2025-06-26T08:45:00'),
-  },
-  // 最低幅のテスト用データ
-  {
-    id: 5,
-    category: '短い予定',
-    startTime: new Date('2025-06-26T17:00:00'),
-    endTime: new Date('2025-06-26T17:15:00'), // 15分
-  },
-  {
-    id: 6,
-    category: '極短予定',
-    startTime: new Date('2025-06-26T18:00:00'),
-    endTime: new Date('2025-06-26T18:05:00'), // 5分
-  },
-  // 31分以上60分以内のテスト (35分)
-  {
-    id: 7,
-    category: '中時間予定',
-    startTime: new Date('2025-06-26T19:00:00'),
-    endTime: new Date('2025-06-26T19:35:00'),
-  },
-]
 
 // 各時間枠divの高さ (h-12 = 48px)
 const SLOT_HEIGHT = 48
@@ -68,8 +25,8 @@ const getEventStyle = (event) => {
   // 終了時刻と開始時刻の差分から高さを計算
   let durationMinutes = (event.endTime.getTime() - event.startTime.getTime()) / (1000 * 60)
 
-  // ここで最低30分を保証
-  durationMinutes = Math.ceil(Math.max(durationMinutes, 1) / 30) * 30 // 最小値を30分に設定
+  // 最低30分の高さ
+  durationMinutes = Math.max(durationMinutes, 30)
 
   const topPosition = HEADER_HEIGHT + (totalStartMinutes / 60) * SLOT_HEIGHT
   const eventHeight = (durationMinutes / 60) * SLOT_HEIGHT

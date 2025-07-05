@@ -1,3 +1,9 @@
+<script setup>
+import TheHeader from '../components/TheHeader.vue'
+import TimeAxis from '../components/TimeAxis.vue'
+import ScheduleColumn from '../components/ScheduleColumn.vue'
+</script>
+
 <template>
   <div class="flex flex-col items-center h-screen bg-[#f3f7ff]">
 
@@ -19,12 +25,6 @@
 
   </div>
 </template>
-
-<script setup>
-import TheHeader from '../components/TheHeader.vue'
-import TimeAxis from '../components/TimeAxis.vue'
-import ScheduleColumn from '../components/ScheduleColumn.vue'
-</script>
 
 <style scoped>
 </style>

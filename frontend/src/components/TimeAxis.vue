@@ -1,14 +1,3 @@
-<template>
-  <div>
-    <div class="h-16 border-b-2 border-slate-300"></div>
-    <div v-for="(text, index) in items" :key="index" class="relative h-12 pr-2 text-right">
-      <span class="relative text-sm text-gray-500 -top-[13px]">
-        {{ text }}
-      </span>
-    </div>
-  </div>
-</template>
-
 <script setup>
 import { ref } from 'vue'
 
@@ -39,5 +28,16 @@ const items = ref([
   '23:00',
 ])
 </script>
+
+<template>
+  <div>
+    <div class="h-16 border-b-2 border-slate-300"></div>
+    <div v-for="(text, index) in items" :key="index" class="relative h-12 pr-2 text-right">
+      <span class="relative text-sm text-gray-500 -top-[13px]">
+        {{ text }}
+      </span>    
+    </div>
+  </div>    
+</template>
 
 <style scoped></style>

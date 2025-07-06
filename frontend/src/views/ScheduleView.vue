@@ -73,7 +73,7 @@ const actualEvents = [
 </script>
 
 <template>
-  <div class="flex flex-col items-center h-screen bg-[#f3f7ff]">
+  <div class="flex flex-col items-center h-screen bg-gray-100">
     <div
       class="w-full max-w-[1500px] h-[100px] bg-light-gray-blue border-2 border-slate-300 flex-shrink-0"
     >

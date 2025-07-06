@@ -15,13 +15,14 @@ const categories = ref([
 <template>
   <div>
     <label class="text-gray-700 text-sm font-bold mb-2">カテゴリ</label>
-    <div>
+    <div class="grid grid-cols-6 gap-8">
       <div
         v-for="cat in categories"
         :key="cat.name"
         class="flex flex-col items-center p-3 border rounded-lg cursor-pointer"
       >
         <font-awesome-icon :icon="cat.icon" class="text-3xl mb-1" />
+        <span class="text-sm text-center font-medium">{{ cat.name }}</span>
       </div>
     </div>
   </div>

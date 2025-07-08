@@ -1,5 +1,9 @@
 <script setup>
 import { ref } from 'vue'
+
+// 親コンポーネントに選択されたカテゴリを伝えるためのemit関数を定義
+const emit = defineEmits(['update:selectedCategory'])
+
 // 仮のカテゴリデータ
 const categories = ref([
   { name: '睡眠', icon: ['fas', 'bed'] },
@@ -26,6 +30,8 @@ const selectedCategory = ref('')
 const selectCategory = (categoryName) => {
   // 既に選択されている場合は選択を解除、そうでない場合は選択
   selectedCategory.value = selectedCategory.value === categoryName ? '' : categoryName
+  // 親コンポーネントに選択されたカテゴリをemitで伝える
+  emit('update:selectedCategory', selectedCategory.value)
 }
 </script>
 

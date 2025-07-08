@@ -21,19 +21,30 @@ const categories = ref([
   { name: 'カフェ', icon: ['fas', 'mug-saucer'] },
   { name: '飲み会', icon: ['fas', 'beer-mug-empty'] },
 ])
+const selectedCategory = ref('')
+// カテゴリがクリックされたときの処理
+const selectCategory = (categoryName) => {
+  // 既に選択されている場合は選択を解除、そうでない場合は選択
+  selectedCategory.value = selectedCategory.value === categoryName ? '' : categoryName
+}
 </script>
 
 <template>
   <div>
-    <label class="text-gray-700 text-sm font-bold mb-2">カテゴリ</label>
+    <label class="block text-gray-700 text-sm font-bold mb-2">カテゴリ</label>
     <div class="grid grid-cols-6 gap-8">
       <div
-        v-for="cat in categories"
-        :key="cat.name"
+        v-for="category in categories"
+        :key="category.name"
         class="flex flex-col items-center p-3 border rounded-lg cursor-pointer"
+        :class="{
+          'bg-blue-200 border-blue-500': selectedCategory === category.name,
+          'bg-gray-50 hover:bg-gray-100 border-gray-300': selectedCategory !== category.name,
+        }"
+        @click="selectCategory(category.name)"
       >
-        <font-awesome-icon :icon="cat.icon" class="text-3xl mb-1" />
-        <span class="text-sm text-center font-medium">{{ cat.name }}</span>
+        <font-awesome-icon :icon="category.icon" class="text-3xl mb-1" />
+        <span class="text-sm text-center font-medium">{{ category.name }}</span>
       </div>
     </div>
   </div>

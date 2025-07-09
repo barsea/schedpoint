@@ -6,6 +6,7 @@ import CategorySelector from '@/components/CategorySelector.vue'
 const category = ref('') // CategorySelectorからの選択を受け取る
 const startTime = ref('') //
 const endTime = ref('') //
+const memo = ref('') //
 
 // CategorySelectorから選択されたカテゴリを受け取るハンドラ
 const handleCategoryUpdate = (selectedCat) => {
@@ -47,6 +48,18 @@ const handleCategoryUpdate = (selectedCat) => {
           class="shadow appearance-none border rounded-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           required
         />
+      </div>
+
+      <!-- メモ -->
+      <div class="mb-4">
+        <label for="memo" class="block text-gray-700 text-sm font-bold mb-2">メモ（任意）</label>
+        <textarea
+          id="memo"
+          v-model="memo"
+          rows="4"
+          class="shadow appearance-none border rounded-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline resize-y"
+          placeholder="イベントの詳細やメモを入力"
+        ></textarea>
       </div>
     </div>
   </div>

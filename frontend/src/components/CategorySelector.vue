@@ -36,7 +36,7 @@ const selectCategory = (categoryName) => {
 </script>
 
 <template>
-  <div>
+  <div class="mb-4">
     <label class="block text-gray-700 text-sm font-bold mb-2">カテゴリ</label>
     <div class="grid grid-cols-6 gap-8">
       <div

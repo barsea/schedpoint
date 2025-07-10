@@ -61,6 +61,23 @@ const handleCategoryUpdate = (selectedCat) => {
           placeholder="イベントの詳細やメモを入力"
         ></textarea>
       </div>
+
+      <!-- ボタンのグループ -->
+      <div class="flex items-center justify-between mt-6">
+        <button
+          type="submit"
+          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline"
+        >
+          保存
+        </button>
+        <button
+          type="button"
+          class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline"
+          @click="$router.back()"
+        >
+          キャンセル
+        </button>
+      </div>
     </div>
   </div>
 </template>

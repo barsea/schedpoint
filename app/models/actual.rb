@@ -1,0 +1,2 @@
+class Actual < ApplicationRecord
+end

@@ -74,3 +74,4 @@ end
 gem 'devise'
 gem 'foreman'
 gem 'devise-jwt'
+gem 'rack-cors'

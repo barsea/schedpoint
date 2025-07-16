@@ -2,16 +2,33 @@
 
 module Users
   class SessionsController < Devise::SessionsController
+    skip_before_action :require_no_authentication, only: [:create]
     respond_to :json
 
-    private
-
-    def respond_with(resource, _opts = {})
-      render json: {
-        status: { code: 200, message: 'Logged in successfully.' },
-        data: UserSerializer.new(resource).serializable_hash[:data][:attributes]
-      }
+    def create
+      if user_signed_in?
+        render json: {
+          status: { code: 200, message: 'You are already logged in.' },
+          data: UserSerializer.new(current_user).serializable_hash[:data][:attributes]
+        }
+        return
+      end
+      self.resource = warden.authenticate(auth_options)
+      if resource
+        sign_in(resource_name, resource)
+        render json: {
+          status: { code: 200, message: 'Logged in successfully.' },
+          data: UserSerializer.new(resource).serializable_hash[:data][:attributes]
+        }
+      else
+        render json: {
+          status: 401,
+          message: 'Invalid email or password.'
+        }, status: :unauthorized
+      end
     end
+
+    private
 
     def respond_to_on_destroy
       if request.headers['Authorization'].present?

@@ -3,6 +3,7 @@
 module Users
   class SessionsController < Devise::SessionsController
     skip_before_action :require_no_authentication, only: [:create]
+    skip_before_action :verify_signed_out_user, only: :destroy
     respond_to :json
 
     def create
@@ -28,9 +29,7 @@ module Users
       end
     end
 
-    private
-
-    def respond_to_on_destroy
+    def destroy
       if request.headers['Authorization'].present?
         jwt_payload = JWT.decode(request.headers['Authorization'].split.last,
                                  Rails.application.credentials.devise_jwt_secret_key!).first
@@ -38,6 +37,7 @@ module Users
       end
 
       if current_user
+        sign_out(current_user)
         render json: {
           status: 200,
           message: 'Logged out successfully.'

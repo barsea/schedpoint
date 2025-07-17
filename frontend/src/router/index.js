@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import ScheduleView from '../views/ScheduleView.vue'
 import EventFormView from '@/views/EventFormView.vue'
 import LoginView from '@/views/LoginView.vue'
+import SignUpView from '@/views/SignUpView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -23,6 +24,11 @@ const router = createRouter({
       path: '/events/new',
       name: 'event-new',
       component: EventFormView,
+    },
+    {
+      path: '/signup',
+      name: 'signup',
+      component: SignUpView,
     },
     {
       path: '/login',

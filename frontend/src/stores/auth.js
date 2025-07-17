@@ -13,6 +13,22 @@ export const useAuthStore = defineStore('auth', {
   },
 
   actions: {
+    async signup(name, email, password) {
+      try {
+        await axios.post('http://localhost:3000/users', {
+          user: {
+            name: name,
+            email: email,
+            password: password,
+          },
+        })
+        return true
+      } catch (error) {
+        console.error('Signup failed:', error)
+        return error.response?.data?.status?.message || '新規登録に失敗しました。'
+      }
+    },
+
     async login(email, password) {
       try {
         const response = await axios.post('http://localhost:3000/users/sign_in', {

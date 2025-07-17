@@ -13,6 +13,17 @@ export const useAuthStore = defineStore('auth', {
   },
 
   actions: {
+    initialize() {
+      const token = localStorage.getItem('token')
+      const user = localStorage.getItem('user')
+
+      if (token && user) {
+        this.token = token
+        this.user = JSON.parse(user)
+        axios.defaults.headers.common['Authorization'] = token
+      }
+    },
+
     async signup(name, email, password) {
       try {
         await axios.post('http://localhost:3000/users', {

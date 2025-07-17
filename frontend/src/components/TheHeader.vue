@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 
@@ -7,10 +7,28 @@ const authStore = useAuthStore()
 const router = useRouter()
 
 const isDropdownOpen = ref(false)
+const dropdown = ref(null)
 
 const toggleDropdown = () => {
   isDropdownOpen.value = !isDropdownOpen.value
 }
+
+// メニューの外側をクリックしたかを判定する関数
+const closeDropdown = (event) => {
+  if (dropdown.value && !dropdown.value.contains(event.target)) {
+    isDropdownOpen.value = false
+  }
+}
+
+// コンポーネントがマウントされた時にイベントリスナーを追加
+onMounted(() => {
+  window.addEventListener('click', closeDropdown)
+})
+
+// コンポーネントがアンマウントされる時にイベントリスナーを削除
+onUnmounted(() => {
+  window.removeEventListener('click', closeDropdown)
+})
 
 const handleLogout = () => {
   authStore.logout()
@@ -56,9 +74,12 @@ const handleLogout = () => {
       <!-- ログイン時の表示 -->
       <div v-else class="flex items-center space-x-4">
         <!-- ユーザー名とプルダウンメニュー -->
-        <div class="relative">
+        <div class="relative" ref="dropdown">
           <!-- @clickでプルダウンの表示/非表示を切り替え -->
-          <button @click="toggleDropdown" class="flex items-center space-x-2 focus:outline-none">
+          <button
+            @click.prevent="toggleDropdown"
+            class="flex items-center space-x-2 focus:outline-none"
+          >
             <span class="text-sm font-medium text-gray-700 dark:text-gray-200">{{
               authStore.userName
             }}</span>

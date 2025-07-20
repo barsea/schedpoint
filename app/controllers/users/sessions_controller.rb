@@ -16,7 +16,6 @@ module Users
       end
       self.resource = warden.authenticate(auth_options)
       if resource
-        sign_in(resource_name, resource)
         render json: {
           status: { code: 200, message: 'Logged in successfully.' },
           data: UserSerializer.new(resource).serializable_hash[:data][:attributes]
@@ -37,7 +36,6 @@ module Users
       end
 
       if current_user
-        sign_out(current_user)
         render json: {
           status: 200,
           message: 'Logged out successfully.'

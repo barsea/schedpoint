@@ -1,7 +1,11 @@
 <script setup>
+import { onMounted } from 'vue'
 import TheHeader from '../components/TheHeader.vue'
 import TimeAxis from '../components/TimeAxis.vue'
 import ScheduleColumn from '../components/ScheduleColumn.vue'
+import { usePlanStore } from '@/stores/plan'
+
+const planStore = usePlanStore()
 
 // --- 予定のモックデータ ---
 const plannedEvents = [
@@ -70,6 +74,11 @@ const actualEvents = [
     endTime: new Date('2025-06-26T17:05:00'), // さらに短い実績
   },
 ]
+
+onMounted(() => {
+  const today = new Date().toISOString().split('T')[0]
+  planStore.fetchPlans(today)
+})
 </script>
 
 <template>

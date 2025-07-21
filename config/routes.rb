@@ -3,6 +3,11 @@ Rails.application.routes.draw do
     registrations: 'users/registrations',
     sessions: 'users/sessions'
   }
-  # get 'events/index'
-  # root to: "events#index"
+
+  namespace :api do
+    namespace :v1 do
+      resources :plans, only: [:index, :create, :show, :update, :destroy]
+      resources :actuals, only: [:index, :create, :show, :update, :destroy]
+    end
+  end
 end

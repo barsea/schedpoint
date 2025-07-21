@@ -1,6 +1,6 @@
 class Api::V1::PlansController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_plan, only: %i[show update]
+  before_action :set_plan, only: %i[show update destroy]
 
   def index
     date = params[:date] ? Date.parse(params[:date]) : Date.current
@@ -27,6 +27,11 @@ class Api::V1::PlansController < ApplicationController
     else
       render json: { errors: @plan.errors.full_messages }, status: :unprocessable_entity
     end
+  end
+
+  def destroy
+    @plan.destroy
+    head :no_content
   end
 
   private

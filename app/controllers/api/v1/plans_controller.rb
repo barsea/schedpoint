@@ -8,8 +8,8 @@ module Api
 
       def index
         date = params[:date] ? Date.parse(params[:date]) : Date.current
-        plans = current_user.plans.where(start_time: date.all_day)
-        render json: plans
+        plans = current_user.plans.includes(:category).where(start_time: date.all_day)
+        render json: plans.as_json(include: { category: { only: %i[id name] } })
       end
 
       def show

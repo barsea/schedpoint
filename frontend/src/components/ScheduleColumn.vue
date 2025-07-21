@@ -15,6 +15,14 @@ const SLOT_HEIGHT = 48
 // h2タグの高さ (h-16 = 64px)
 const HEADER_HEIGHT = 64
 
+const formatTime = (date) => {
+  if (!date || !(date instanceof Date)) return ''
+  // getHours()とgetMinutes()はブラウザのローカルタイム（日本時間）を返すので、ここでタイムゾーンが正しく扱われます
+  const hours = date.getHours().toString().padStart(2, '0')
+  const minutes = date.getMinutes().toString().padStart(2, '0')
+  return `${hours}:${minutes}`
+}
+
 // イベントのスタイルを計算する関数
 const getEventStyle = (event) => {
   // 開始時刻を基準にtopを計算
@@ -47,8 +55,8 @@ const getEventStyle = (event) => {
     <EventBlock
       v-for="event in events"
       :key="event.id"
-      :category-name="event.category"
-      :time="`${event.startTime.getHours().toString().padStart(2, '0')}:${event.startTime.getMinutes().toString().padStart(2, '0')} - ${event.endTime.getHours().toString().padStart(2, '0')}:${event.endTime.getMinutes().toString().padStart(2, '0')}`"
+      :category-name="event.category?.name || event.memo"
+      :time="`${formatTime(event.startTime)} - ${formatTime(event.endTime)}`"
       :style="getEventStyle(event)"
     />
   </div>

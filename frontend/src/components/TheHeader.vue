@@ -2,8 +2,10 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { usePlanStore } from '@/stores/plan'
 
 const authStore = useAuthStore()
+const planStore = usePlanStore()
 const router = useRouter()
 
 const isDropdownOpen = ref(false)
@@ -39,18 +41,23 @@ const handleLogout = () => {
 <template>
   <div class="container mx-auto flex items-center justify-between h-full px-4 py-3">
     <div class="flex items-center">
-      <div class="text-2xl mr-8 text-gray-800">2025年6月26日</div>
+      <div class="text-2xl mr-8 text-gray-800">{{ planStore.formattedCurrentDate }}</div>
       <button
+        @click="planStore.resetToToday()"
         class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold text-xl py-2 px-4 rounded-lg mr-6"
       >
         今日
       </button>
       <button
+        @click="planStore.changeDate(-1)"
         class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-lg mr-4"
       >
         前日
       </button>
-      <button class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-lg">
+      <button
+        @click="planStore.changeDate(1)"
+        class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-lg"
+      >
         翌日
       </button>
     </div>

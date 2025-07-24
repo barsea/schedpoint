@@ -1,21 +1,41 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
 
+// 'YYYY-MM-DD'形式の、今日の日付文字列を返すヘルパー関数
+const getTodayString = () => new Date().toISOString().split('T')[0]
+
 export const usePlanStore = defineStore('plan', {
   state: () => ({
     plans: [],
+    // currentDateを 'YYYY-MM-DD' 形式の文字列で管理します
+    currentDate: getTodayString(),
   }),
 
-  getters: {},
+  getters: {
+    // currentDateを 'YYYY年M月D日' 形式の日本語文字列にフォーマットして返す。ヘッダーの日付表示で使う。
+    formattedCurrentDate: (state) => {
+      // 'YYYY-MM-DD' 文字列からDateオブジェクトを生成
+      // 'T00:00:00Z' をつけないと、ローカルタイムゾーンで解釈される可能性があるためUTCを明示
+      const date = new Date(`${state.currentDate}T00:00:00Z`)
+
+      // 日本語ロケールとJSTタイムゾーンを指定してフォーマット
+      const options = {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        timeZone: 'Asia/Tokyo', // タイムゾーンをJSTに固定
+      }
+      return new Intl.DateTimeFormat('ja-JP', options).format(date)
+    },
+  },
 
   actions: {
     /**
-     * @param {string} date
+     * @param {string} date - 'YYYY-MM-DD'形式の日付文字列
      */
     async fetchPlans(date) {
       try {
         const response = await axios.get(`http://localhost:3000/api/v1/plans?date=${date}`)
-
         const formattedPlans = response.data.map((plan) => {
           return {
             ...plan,
@@ -23,12 +43,35 @@ export const usePlanStore = defineStore('plan', {
             endTime: new Date(plan.end_time),
           }
         })
-
         this.plans = formattedPlans
       } catch (error) {
         console.error('予定の取得に失敗しました:', error)
         this.plans = []
       }
+    },
+
+    /**
+     * 現在の日付を変更し、その日付の予定を再取得するアクション
+     * @param {number} days - 変更する日数（-1なら昨日、1なら明日）
+     */
+    async changeDate(days) {
+      // 現在の日付をDateオブジェクトに変換
+      const newDate = new Date(this.currentDate)
+      // 日付を加算/減算
+      newDate.setDate(newDate.getDate() + days)
+      // 'YYYY-MM-DD'形式の文字列に戻してstateを更新
+      this.currentDate = newDate.toISOString().split('T')[0]
+
+      // 新しい日付で予定データを再取得
+      await this.fetchPlans(this.currentDate)
+    },
+
+    /**
+     * 日付を今日にリセットし、今日の予定を再取得するアクション
+     */
+    async resetToToday() {
+      this.currentDate = getTodayString()
+      await this.fetchPlans(this.currentDate)
     },
   },
 })

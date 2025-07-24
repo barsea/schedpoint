@@ -36,13 +36,37 @@ export const usePlanStore = defineStore('plan', {
     async fetchPlans(date) {
       try {
         const response = await axios.get(`http://localhost:3000/api/v1/plans?date=${date}`)
-        const formattedPlans = response.data.map((plan) => {
+
+        // jsonapi-serializerからのレスポンスを分解
+        const planData = response.data.data
+        const includedData = response.data.included
+
+        // カテゴリ情報をIDですぐに探せるように、Mapオブジェクトに変換しておく
+        const categoryMap = new Map(
+          includedData
+            .filter((item) => item.type === 'category')
+            .map((item) => [item.id, item.attributes]),
+        )
+
+        // APIからのデータを、コンポーネントが使いやすい形式に整形する
+        const formattedPlans = planData.map((plan) => {
+          const categoryId = plan.relationships.category.data.id
+          const category = categoryMap.get(categoryId)
           return {
-            ...plan,
-            startTime: new Date(plan.start_time),
-            endTime: new Date(plan.end_time),
+            id: plan.id,
+            // plan.attributesから他のプロパティを取得
+            ...plan.attributes,
+            // 文字列の日付をDateオブジェクトに変換
+            startTime: new Date(plan.attributes.start_time),
+            endTime: new Date(plan.attributes.end_time),
+            // 関連するカテゴリ情報も追加
+            category: {
+              id: categoryId,
+              name: category.name,
+            },
           }
         })
+
         this.plans = formattedPlans
       } catch (error) {
         console.error('予定の取得に失敗しました:', error)

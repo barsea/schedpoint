@@ -2,7 +2,14 @@ import { defineStore } from 'pinia'
 import axios from 'axios'
 
 // 'YYYY-MM-DD'形式の、今日の日付文字列を返すヘルパー関数
-const getTodayString = () => new Date().toISOString().split('T')[0]
+const getTodayString = () => {
+  const today = new Date() // PCのローカルタイム（日本時間）でDateオブジェクトを生成
+  const year = today.getFullYear() // 年を取得
+  const month = String(today.getMonth() + 1).padStart(2, '0') // 月を取得（0から始まるので+1する）
+  const day = String(today.getDate()).padStart(2, '0') // 日を取得
+
+  return `${year}-${month}-${day}` // 'YYYY-MM-DD'形式の文字列を組み立てて返す
+}
 
 export const usePlanStore = defineStore('plan', {
   state: () => ({

@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
+import { useAuthStore } from './auth'
 
 // 'YYYY-MM-DD'形式の、今日の日付文字列を返すヘルパー関数
 const getTodayString = () => {
@@ -41,8 +42,20 @@ export const usePlanStore = defineStore('plan', {
      * @param {string} date - 'YYYY-MM-DD'形式の日付文字列
      */
     async fetchPlans(date) {
+      const authStore = useAuthStore() // 👈 2. 認証ストアをインスタンス化
+      if (!authStore.token) {
+        console.error('認証トークンがありません。')
+        this.plans = []
+        return
+      }
+
       try {
-        const response = await axios.get(`http://localhost:3000/api/v1/plans?date=${date}`)
+        const headers = {
+          Authorization: authStore.token,
+        }
+        const response = await axios.get(`http://localhost:3000/api/v1/plans?date=${date}`, {
+          headers,
+        })
 
         // jsonapi-serializerからのレスポンスを分解
         const planData = response.data.data
@@ -103,6 +116,56 @@ export const usePlanStore = defineStore('plan', {
     async resetToToday() {
       this.currentDate = getTodayString()
       await this.fetchPlans(this.currentDate)
+    },
+
+    /**
+     * 新しい予定を作成するアクション
+     * @param {object} planData - { memo, start_time, end_time, category_id }
+     */
+    async createPlan(planData) {
+      const authStore = useAuthStore()
+      if (!authStore.token) {
+        console.error('認証トークンがありません。')
+        return { success: false, errors: ['ログインしてください。'] }
+      }
+
+      try {
+        const headers = {
+          Authorization: authStore.token,
+        }
+
+        // Rails APIが受け取る形式 { plan: { ... } } に合わせてデータを整形
+        const response = await axios.post(
+          'http://localhost:3000/api/v1/plans',
+          { plan: planData },
+          { headers },
+        )
+
+        const newPlanData = response.data.data
+        const newCategoryId = newPlanData.relationships.category.data.id
+
+        // ストアのカテゴリ一覧から、IDが一致するものを探す
+        const category = authStore.categories.find((c) => c.id === newCategoryId)
+
+        // APIから返ってきた作成済みのデータを、Vueが使いやすい形に再加工する
+        const newPlan = {
+          id: newPlanData.id,
+          ...newPlanData.attributes,
+          startTime: new Date(newPlanData.attributes.start_time),
+          endTime: new Date(newPlanData.attributes.end_time),
+          category: {
+            id: newCategoryId,
+            name: category ? category.name : '不明なカテゴリ',
+          },
+        }
+
+        // stateのplans配列に新しい予定を追加する。これにより、ページをリロードしなくてもカレンダーに即時反映される
+        this.plans.push(newPlan)
+        return { success: true }
+      } catch (error) {
+        console.error('予定の作成に失敗しました:', error.response?.data?.errors)
+        return { success: false, errors: error.response?.data?.errors }
+      }
     },
   },
 })

@@ -20,13 +20,13 @@ module Api
       end
 
       def show
-        render json: @plan
+        render json: Api::V1::PlanSerializer.new(@plan).serializable_hash
       end
 
       def create
         plan = current_user.plans.build(plan_params)
         if plan.save
-          render json: plan, status: :created
+          render json: Api::V1::PlanSerializer.new(plan).serializable_hash, status: :created
         else
           render json: { errors: plan.errors.full_messages }, status: :unprocessable_entity
         end
@@ -34,7 +34,7 @@ module Api
 
       def update
         if @plan.update(plan_params)
-          render json: @plan, status: :ok
+          render json: Api::V1::PlanSerializer.new(@plan).serializable_hash, status: :ok
         else
           render json: { errors: @plan.errors.full_messages }, status: :unprocessable_entity
         end

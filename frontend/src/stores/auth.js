@@ -3,13 +3,14 @@ import axios from 'axios'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
-    user: null,
     token: null,
+    user: null,
+    categories: [],
   }),
 
   getters: {
     isLoggedIn: (state) => !!state.token,
-    userName: (state) => state.user?.name,
+    userName: (state) => state.user?.attributes?.name,
   },
 
   actions: {
@@ -18,9 +19,15 @@ export const useAuthStore = defineStore('auth', {
       const user = localStorage.getItem('user')
 
       if (token && user) {
+        // 1. ストアの記憶を復元する
         this.token = token
         this.user = JSON.parse(user)
+
+        // 2. これからのAPI通信のために、axiosにトークンをセットする
         axios.defaults.headers.common['Authorization'] = token
+
+        // 3. 必要な関連データを取得する
+        this.fetchCategories()
       }
     },
 
@@ -43,10 +50,7 @@ export const useAuthStore = defineStore('auth', {
     async login(email, password) {
       try {
         const response = await axios.post('http://localhost:3000/users/sign_in', {
-          user: {
-            email: email,
-            password: password,
-          },
+          user: { email, password },
         })
 
         const token = response.headers.authorization
@@ -60,9 +64,12 @@ export const useAuthStore = defineStore('auth', {
 
         axios.defaults.headers.common['Authorization'] = token
 
+        await this.fetchCategories()
+
         return true
       } catch (error) {
         console.error('Login failed:', error)
+        this.logout()
         return false
       }
     },
@@ -70,9 +77,30 @@ export const useAuthStore = defineStore('auth', {
     logout() {
       this.token = null
       this.user = null
+      this.categories = []
       localStorage.removeItem('token')
       localStorage.removeItem('user')
       delete axios.defaults.headers.common['Authorization']
+    },
+
+    async fetchCategories() {
+      if (!this.token) {
+        console.error('カテゴリ取得には認証が必要です。')
+        return
+      }
+      try {
+        const headers = { Authorization: this.token }
+        const response = await axios.get('http://localhost:3000/api/v1/categories', { headers })
+
+        // jsonapi-serializer形式のデータを整形してstateに保存
+        this.categories = response.data.data.map((item) => ({
+          id: item.id,
+          ...item.attributes,
+        }))
+      } catch (error) {
+        console.error('カテゴリの取得に失敗しました:', error)
+        this.categories = [] // エラー時は空にする
+      }
     },
   },
 })

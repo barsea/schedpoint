@@ -1,41 +1,11 @@
 <script setup>
+import { onMounted } from 'vue'
 import TheHeader from '../components/TheHeader.vue'
 import TimeAxis from '../components/TimeAxis.vue'
 import ScheduleColumn from '../components/ScheduleColumn.vue'
+import { usePlanStore } from '@/stores/plan'
 
-// --- 予定のモックデータ ---
-const plannedEvents = [
-  {
-    id: 1,
-    category: '開発',
-    startTime: new Date('2025-06-26T09:00:00'),
-    endTime: new Date('2025-06-26T10:30:00'),
-  },
-  {
-    id: 2,
-    category: '休憩',
-    startTime: new Date('2025-06-26T12:00:00'),
-    endTime: new Date('2025-06-26T12:30:00'),
-  },
-  {
-    id: 3,
-    category: '学習',
-    startTime: new Date('2025-06-26T14:00:00'),
-    endTime: new Date('2025-06-26T16:00:00'),
-  },
-  {
-    id: 4,
-    category: 'ミーティング',
-    startTime: new Date('2025-06-26T08:00:00'),
-    endTime: new Date('2025-06-26T08:45:00'),
-  },
-  {
-    id: 5,
-    category: '短い予定',
-    startTime: new Date('2025-06-26T17:00:00'),
-    endTime: new Date('2025-06-26T17:15:00'),
-  },
-]
+const planStore = usePlanStore()
 
 // --- 実績のモックデータ ---
 const actualEvents = [
@@ -70,6 +40,11 @@ const actualEvents = [
     endTime: new Date('2025-06-26T17:05:00'), // さらに短い実績
   },
 ]
+
+onMounted(() => {
+  const today = new Date().toISOString().split('T')[0]
+  planStore.fetchPlans(today)
+})
 </script>
 
 <template>
@@ -87,7 +62,7 @@ const actualEvents = [
         <TimeAxis />
       </div>
       <div class="w-[700px] min-h-[1216px] flex-grow bg-white border-x-2 border-slate-300">
-        <ScheduleColumn title="予定" :events="plannedEvents" />
+        <ScheduleColumn title="予定" :events="planStore.plans" />
       </div>
       <div class="w-[700px] min-h-[1216px] flex-grow bg-white">
         <ScheduleColumn title="実績" :events="actualEvents" />

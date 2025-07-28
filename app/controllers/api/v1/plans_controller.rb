@@ -8,18 +8,25 @@ module Api
 
       def index
         date = params[:date] ? Date.parse(params[:date]) : Date.current
-        plans = current_user.plans.where(start_time: date.all_day)
-        render json: plans
+
+        day_start = date.beginning_of_day
+        day_end = date.end_of_day
+
+        plans = current_user.plans.includes(:category).where('start_time <= ? AND end_time >= ?', day_end, day_start)
+        # シリアライザを呼び出すためのオプション
+        # これでPlanに紐づくCategoryの情報も含めてくれます
+        options = { include: [:category] }
+        render json: Api::V1::PlanSerializer.new(plans, options).serializable_hash
       end
 
       def show
-        render json: @plan
+        render json: Api::V1::PlanSerializer.new(@plan).serializable_hash
       end
 
       def create
         plan = current_user.plans.build(plan_params)
         if plan.save
-          render json: plan, status: :created
+          render json: Api::V1::PlanSerializer.new(plan).serializable_hash, status: :created
         else
           render json: { errors: plan.errors.full_messages }, status: :unprocessable_entity
         end
@@ -27,7 +34,7 @@ module Api
 
       def update
         if @plan.update(plan_params)
-          render json: @plan, status: :ok
+          render json: Api::V1::PlanSerializer.new(@plan).serializable_hash, status: :ok
         else
           render json: { errors: @plan.errors.full_messages }, status: :unprocessable_entity
         end

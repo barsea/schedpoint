@@ -8,18 +8,12 @@ module Users
 
     def create
       if user_signed_in?
-        render json: {
-          status: { code: 200, message: 'You are already logged in.' },
-          data: UserSerializer.new(current_user).serializable_hash[:data][:attributes]
-        }
+        render json: Api::V1::UserSerializer.new(current_user).serializable_hash, status: :ok
         return
       end
       self.resource = warden.authenticate(auth_options)
       if resource
-        render json: {
-          status: { code: 200, message: 'Logged in successfully.' },
-          data: UserSerializer.new(resource).serializable_hash[:data][:attributes]
-        }
+        render json: Api::V1::UserSerializer.new(resource).serializable_hash, status: :ok
       else
         render json: {
           status: 401,

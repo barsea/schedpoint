@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_07_14_031635) do
+ActiveRecord::Schema[7.1].define(version: 2025_07_25_011855) do
   create_table "actuals", charset: "utf8mb3", force: :cascade do |t|
     t.text "memo"
     t.datetime "start_time", null: false
@@ -27,6 +27,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_14_031635) do
     t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "icon"
     t.index ["name"], name: "index_categories_on_name", unique: true
   end
 

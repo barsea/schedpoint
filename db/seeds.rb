@@ -1,11 +1,36 @@
 # frozen_string_literal: true
 
-# This file should ensure the existence of records required to run the application in every environment (production,
-# development, test). The code here should be idempotent so that it can be executed at any point in every environment.
-# The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
-#
-# Example:
-#
-#   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
-#     MovieGenre.find_or_create_by!(name: genre_name)
-#   end
+# 既存のカテゴリデータを一度すべて削除する
+puts 'Destroying all categories...'
+Category.destroy_all
+
+# 登録したいカテゴリデータの配列
+# フロントエンドのアイコン配列 ['fas', 'bed'] を、スペース区切りの文字列 "fas bed" として保存する
+categories = [
+  { name: '睡眠', icon: 'fas bed' },
+  { name: '食事', icon: 'fas utensils' },
+  { name: 'お風呂', icon: 'fas bath' },
+  { name: '移動', icon: 'fas train' },
+  { name: '仕事', icon: 'fas briefcase' },
+  { name: '学校', icon: 'fas school' },
+  { name: '勉強', icon: 'fas book-open' },
+  { name: 'スマホ', icon: 'fas mobile-alt' },
+  { name: 'PC', icon: 'fas laptop' },
+  { name: '遊ぶ', icon: 'fas music' },
+  { name: 'ゲーム', icon: 'fas gamepad' },
+  { name: 'TV', icon: 'fas tv' },
+  { name: '映画', icon: 'fas film' },
+  { name: '読書', icon: 'fas book' },
+  { name: 'スポーツ', icon: 'fas futbol' },
+  { name: '買い物', icon: 'fas shopping-cart' },
+  { name: 'カフェ', icon: 'fas mug-saucer' },
+  { name: '飲み会', icon: 'fas beer-mug-empty' }
+]
+
+# 配列のデータを一つずつデータベースに登録する
+puts 'Creating categories...'
+categories.each do |category|
+  Category.create!(category)
+end
+
+puts "Created #{Category.count} categories."

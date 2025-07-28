@@ -8,10 +8,7 @@ module Users
       build_resource(sign_up_params)
 
       if resource.save
-        render json: {
-          status: { code: 200, message: 'Signed up successfully.' },
-          data: UserSerializer.new(resource).serializable_hash[:data][:attributes]
-        }
+        render json: Api::V1::UserSerializer.new(resource).serializable_hash, status: :created
       else
         render json: {
           status: { message: "User couldn't be created successfully. #{resource.errors.full_messages.to_sentence}" }

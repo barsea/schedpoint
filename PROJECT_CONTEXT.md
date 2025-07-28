@@ -8,6 +8,7 @@
 
 - **ユーザー認証**: 新規登録、ログイン、ログアウト機能。
 - **予定・実績の CRUD 管理**: カレンダー形式の UI で、日々の予定と、実際に行動した実績を記録・閲覧・更新・削除する機能。
+- **カテゴリ管理**: 予定や実績を分類するためのカテゴリ機能。
 
 ### 2. 技術スタック
 
@@ -22,7 +23,7 @@
   - `devise`, `devise-jwt`: トークンベースの API 認証
   - `rspec-rails`: テストフレームワーク
   - `rack-cors`: CORS（クロスオリジンリソース共有）設定
-  - `jsonapi-serializer`: 安全な JSON レスポンスの生成
+  - `jsonapi-serializer`: 安全で一貫性のある JSON レスポンスの生成
   - `puma`: Web サーバー
   - `rubocop`, `rubocop-rails`: 静的コード解析・フォーマッター
 
@@ -32,13 +33,13 @@
 - **状態管理**: Pinia
 - **HTTP クライアント**: Axios
 - **ルーティング**: Vue Router
-- **UI/スタイリング**: Tailwind CSS
+- **UI/スタイリング**: Tailwind CSS, Font Awesome
 - **コードフォーマッター**: Prettier
 
 ### 3. データベーススキーマ
 
 ```ruby
-ActiveRecord::Schema[7.1].define(version: 2025_07_14_031635) do
+ActiveRecord::Schema[7.1].define(version: 2025_07_25_120000) do
   create_table "actuals", charset: "utf8mb3", force: :cascade do |t|
     t.text "memo"
     t.datetime "start_time", null: false
@@ -53,6 +54,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_14_031635) do
 
   create_table "categories", charset: "utf8mb3", force: :cascade do |t|
     t.string "name", null: false
+    t.string "icon"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["name"], name: "index_categories_on_name", unique: true
@@ -148,6 +150,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :plans, only: [:index, :create, :show, :update, :destroy]
       resources :actuals, only: [:index, :create, :show, :update, :destroy]
+      resources :categories, only: [:index]
     end
   end
 end
@@ -161,6 +164,15 @@ end
 - **API 設計**:
   - 将来の拡張性を考慮し、`api/v1/`のように**バージョンを明記した RESTful API**として設計。
   - コア機能は`EventsController`で一つにまとめるのではなく、責務を明確にするため`PlansController`と`ActualsController`に分割。
-- **タイムゾーン**: バックエンドは**UTC**で時刻を管理し、フロントエンド側で**日本時間（JST）**に変換して表示する、グローバルスタンダードな方式を採用。
+  - **API レスポンスの統一**: `jsonapi-serializer`を全面的に採用し、すべての API エンドポイントで構造化された JSON を返すように設計。これによりフロントエンドでのデータハンドリングを簡素化し、保守性を向上。
+- **データの一貫性**: `db/seeds.rb` を活用し、アプリケーションの初期データ（カテゴリ一覧など）を定義。これにより、どの開発環境でも同じデータでアプリケーションを起動できる状態を担保。
+- **タイムゾーン**: バックエンドは**UTC**で時刻を管理し、フロントエンド側で日本時間（JST）に変換して表示する、グローバルスタンダードな方式を採用。
 - **テスト**: バックエンド API の動作確認は**Postman**で実施。テストフレームワークとして**RSpec**を導入済み。
 - **コード品質**: `RuboCop`と`Prettier`を導入し、保存時の自動整形を設定することで、コードの品質と一貫性を担保。
+
+### 7. 現在の状況と次のタスク
+
+- **【完了】** ユーザー認証機能（新規登録、ログイン、ログアウト）
+- **【完了】** 「予定」の CRUD 管理機能（一覧表示、新規作成）
+- **【TODO】** 「予定」の更新・削除機能の実装
+- **【TODO】** 「実績」の CRUD 管理機能の実装（「予定」の実装を参考に進める）

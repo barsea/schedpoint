@@ -17,6 +17,8 @@ export const usePlanStore = defineStore('plan', {
     plans: [],
     // currentDateを 'YYYY-MM-DD' 形式の文字列で管理します
     currentDate: getTodayString(),
+    isModalOpen: false,
+    selectedPlan: null,
   }),
 
   getters: {
@@ -39,10 +41,27 @@ export const usePlanStore = defineStore('plan', {
 
   actions: {
     /**
+     * 予定詳細モーダルを開くアクション
+     * @param {object} plan - 表示する予定オブジェクト
+     */
+    openPlanModal(plan) {
+      this.selectedPlan = plan
+      this.isModalOpen = true
+    },
+
+    /**
+     * 予定詳細モーダルを閉じるアクション
+     */
+    closePlanModal() {
+      this.isModalOpen = false
+      this.selectedPlan = null
+    },
+
+    /**
      * @param {string} date - 'YYYY-MM-DD'形式の日付文字列
      */
     async fetchPlans(date) {
-      const authStore = useAuthStore() // 👈 2. 認証ストアをインスタンス化
+      const authStore = useAuthStore()
       if (!authStore.token) {
         console.error('認証トークンがありません。')
         this.plans = []

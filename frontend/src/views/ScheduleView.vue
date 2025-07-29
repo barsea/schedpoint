@@ -4,6 +4,7 @@ import TheHeader from '../components/TheHeader.vue'
 import TimeAxis from '../components/TimeAxis.vue'
 import ScheduleColumn from '../components/ScheduleColumn.vue'
 import { usePlanStore } from '@/stores/plan'
+import PlanDetailModal from '../components/PlanDetailModal.vue'
 
 const planStore = usePlanStore()
 
@@ -69,6 +70,13 @@ onMounted(() => {
       </div>
     </div>
   </div>
-</template>
 
-<style scoped></style>
+  <!-- 
+    v-ifでモーダルを表示/非表示
+    :planで選択された予定データをPropsとして渡す
+  -->
+  <PlanDetailModal
+    v-if="planStore.isModalOpen && planStore.selectedPlan"
+    :plan="planStore.selectedPlan"
+  />
+</template>

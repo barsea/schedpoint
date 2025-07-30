@@ -41,7 +41,9 @@ watch(
   ([newPlan, categories]) => {
     // planデータがあり、かつ、カテゴリ一覧が取得済みの時だけ処理を実行
     if (newPlan && categories.length > 0) {
-      selectedCategoryObject.value = categories.find((c) => c.id === newPlan.category.id)
+      selectedCategoryObject.value = categories.find(
+        (c) => String(c.id) === String(newPlan.category.id), // 両方を文字列に変換して比較するように修正
+      )
       // 日時は 'YYYY-MM-DDTHH:mm' 形式の文字列に変換する
       startTime.value = toLocalISOString(newPlan.startTime)
       endTime.value = toLocalISOString(newPlan.endTime)

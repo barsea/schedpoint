@@ -4,6 +4,7 @@ import TheHeader from '../components/TheHeader.vue'
 import TimeAxis from '../components/TimeAxis.vue'
 import ScheduleColumn from '../components/ScheduleColumn.vue'
 import { usePlanStore } from '@/stores/plan'
+import PlanDetailModal from '../components/PlanDetailModal.vue'
 
 const planStore = usePlanStore()
 
@@ -45,6 +46,11 @@ onMounted(() => {
   const today = new Date().toISOString().split('T')[0]
   planStore.fetchPlans(today)
 })
+
+// イベントを処理してモーダルを開く関数を定義
+const handlePlanClick = (plan) => {
+  planStore.openPlanModal(plan)
+}
 </script>
 
 <template>
@@ -62,13 +68,21 @@ onMounted(() => {
         <TimeAxis />
       </div>
       <div class="w-[700px] min-h-[1216px] flex-grow bg-white border-x-2 border-slate-300">
-        <ScheduleColumn title="予定" :events="planStore.plans" />
+        <!-- @plan-clickで子からのイベントを捕捉する -->
+        <ScheduleColumn title="予定" :events="planStore.plans" @plan-click="handlePlanClick" />
       </div>
       <div class="w-[700px] min-h-[1216px] flex-grow bg-white">
         <ScheduleColumn title="実績" :events="actualEvents" />
       </div>
     </div>
   </div>
-</template>
 
-<style scoped></style>
+  <!-- 
+    v-ifでモーダルを表示/非表示
+    :planで選択された予定データをPropsとして渡す
+  -->
+  <PlanDetailModal
+    v-if="planStore.isModalOpen && planStore.selectedPlan"
+    :plan="planStore.selectedPlan"
+  />
+</template>

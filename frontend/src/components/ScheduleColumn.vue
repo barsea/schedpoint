@@ -1,6 +1,8 @@
 <script setup>
 import EventBlock from './EventBlock.vue'
 
+const emit = defineEmits(['plan-click'])
+
 // 親からeventsデータを受け取るようにPropsを定義
 defineProps({
   title: String,
@@ -44,6 +46,15 @@ const getEventStyle = (event) => {
     height: `${eventHeight}px`,
   }
 }
+
+/**
+ * クリックイベントを処理し、親コンポーネントに通知する関数
+ * @param {object} event - クリックされた予定オブジェクト
+ */
+const handlePlanClick = (event) => {
+  // 'plan-click' という名前のイベントを発行し、クリックされた予定データを一緒に渡します。
+  emit('plan-click', event)
+}
 </script>
 
 <template>
@@ -52,14 +63,15 @@ const getEventStyle = (event) => {
       {{ title }}
     </h2>
     <div v-for="n in 24" :key="n" class="h-12 pr-2 border-b border-gray-200"></div>
+    <!-- EventBlockがクリックされたらhandlePlanClickを呼び出す -->
     <EventBlock
       v-for="event in events"
       :key="event.id"
       :category-name="event.category?.name || event.memo"
       :time="`${formatTime(event.startTime)} - ${formatTime(event.endTime)}`"
       :style="getEventStyle(event)"
+      @click="handlePlanClick(event)"
+      class="cursor-pointer"
     />
   </div>
 </template>
-
-<style scoped></style>

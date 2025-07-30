@@ -18,7 +18,7 @@ const toLocalISOString = (date) => {
   return `${year}-${month}-${day}T${hours}:${minutes}`
 }
 
-// 親コンポーネントから'plan'という名前でデータを受け取ることを宣言
+// 親コンポーネントから'plan'という名前でデータを受け取る
 const props = defineProps({
   plan: {
     type: Object,
@@ -53,7 +53,44 @@ watch(
   { immediate: true }, // コンポーネントの初回表示時にも即時実行するオプション
 )
 
-// モーダルを閉じるための関数を定義
+// --- イベントハンドラ ---
+/**
+ * 更新ボタンがクリックされたときの処理
+ */
+const handleUpdate = async () => {
+  if (!selectedCategoryObject.value) {
+    alert('カテゴリを選択してください。')
+    return
+  }
+
+  const planData = {
+    id: props.plan.id, // 更新対象のIDを忘れずに含める
+    category_id: selectedCategoryObject.value.id,
+    start_time: startTime.value,
+    end_time: endTime.value,
+    memo: memo.value,
+  }
+
+  const result = await planStore.updatePlan(planData)
+  if (!result.success) {
+    alert('予定の更新に失敗しました。\n' + (result.errors || []).join('\n'))
+  }
+}
+
+/**
+ * 削除ボタンがクリックされたときの処理
+ */
+const handleDelete = async () => {
+  // ユーザーに最終確認
+  if (window.confirm('この予定を本当に削除しますか？')) {
+    const result = await planStore.deletePlan(props.plan.id)
+    if (!result.success) {
+      alert('予定の削除に失敗しました。\n' + (result.errors || []).join('\n'))
+    }
+  }
+}
+
+// モーダルを閉じるための関数
 const closeModal = () => {
   planStore.closePlanModal()
 }
@@ -66,7 +103,8 @@ const closeModal = () => {
   >
     <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-3xl">
       <h2 class="text-2xl font-bold text-center mb-6">予定の詳細・編集</h2>
-      <form @submit.prevent>
+      <!-- formのsubmitイベントでhandleUpdateを呼び出す -->
+      <form @submit.prevent="handleUpdate">
         <!-- v-modelでローカル変数とフォームをバインド -->
         <CategorySelector :categories="authStore.categories" v-model="selectedCategoryObject" />
 
@@ -114,9 +152,11 @@ const closeModal = () => {
             >
               更新
             </button>
+            <!-- 削除ボタンのクリックイベントでhandleDeleteを呼び出す -->
             <button
               type="button"
               class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline ml-4"
+              @click="handleDelete"
             >
               削除
             </button>

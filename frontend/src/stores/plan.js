@@ -186,5 +186,96 @@ export const usePlanStore = defineStore('plan', {
         return { success: false, errors: error.response?.data?.errors }
       }
     },
+
+    /**
+     * 既存の予定を更新するアクション
+     * @param {object} planData - { id, memo, start_time, end_time, category_id }
+     */
+    async updatePlan(planData) {
+      const authStore = useAuthStore()
+      if (!authStore.token) {
+        console.error('認証トークンがありません。')
+        return { success: false, errors: ['ログインしてください。'] }
+      }
+
+      // 更新対象のIDを分割代入で取り出しておく
+      const { id, ...updateData } = planData
+
+      try {
+        const headers = {
+          Authorization: authStore.token,
+        }
+
+        // Rails APIが受け取る形式 { plan: { ... } } に合わせてデータを整形
+        const response = await axios.put(
+          `http://localhost:3000/api/v1/plans/${id}`, // URLにIDを含める
+          { plan: updateData },
+          { headers },
+        )
+
+        // --- ここからが画面への即時反映処理 ---
+        const updatedPlanData = response.data.data
+        const categoryId = updatedPlanData.relationships.category.data.id
+        const category = authStore.categories.find((c) => String(c.id) === String(categoryId))
+
+        // APIからのレスポンスを、stateで管理している形式に再加工
+        const formattedUpdatedPlan = {
+          id: updatedPlanData.id,
+          ...updatedPlanData.attributes,
+          startTime: new Date(updatedPlanData.attributes.start_time),
+          endTime: new Date(updatedPlanData.attributes.end_time),
+          category: {
+            id: categoryId,
+            name: category ? category.name : '不明なカテゴリ',
+          },
+        }
+
+        // stateのplans配列から、更新したplanと同じIDのものを探し、そのインデックス番号を取得
+        const index = this.plans.findIndex((p) => p.id === formattedUpdatedPlan.id)
+
+        // もし見つかれば、その要素を新しいデータで置き換える
+        if (index !== -1) {
+          this.plans[index] = formattedUpdatedPlan
+        }
+        // --- ここまでが即時反映処理 ---
+
+        this.closePlanModal() // 最後にモーダルを閉じる
+        return { success: true }
+      } catch (error) {
+        console.error('予定の更新に失敗しました:', error.response?.data?.errors)
+        return { success: false, errors: error.response?.data?.errors }
+      }
+    },
+
+    /**
+     * 予定を削除するアクション
+     * @param {string} planId - 削除する予定のID
+     */
+    async deletePlan(planId) {
+      const authStore = useAuthStore()
+      if (!authStore.token) {
+        console.error('認証トークンがありません。')
+        return { success: false, errors: ['ログインしてください。'] }
+      }
+
+      try {
+        const headers = {
+          Authorization: authStore.token,
+        }
+
+        // DELETEリクエストを送信
+        await axios.delete(`http://localhost:3000/api/v1/plans/${planId}`, { headers })
+
+        // --- 画面への即時反映処理 ---
+        // state.plans配列から、削除したIDと一致しないものだけをフィルタリングして新しい配列を作る
+        this.plans = this.plans.filter((p) => p.id !== planId)
+
+        this.closePlanModal() // 最後にモーダルを閉じる
+        return { success: true }
+      } catch (error) {
+        console.error('予定の削除に失敗しました:', error.response?.data?.errors)
+        return { success: false, errors: error.response?.data?.errors }
+      }
+    },
   },
 })

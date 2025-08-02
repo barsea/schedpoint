@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # 既存のカテゴリデータを一度すべて削除する
-puts 'Destroying all categories...'
+Rails.logger.debug 'Destroying all categories...'
 Category.destroy_all
 
 # 登録したいカテゴリデータの配列
@@ -28,9 +28,9 @@ categories = [
 ]
 
 # 配列のデータを一つずつデータベースに登録する
-puts 'Creating categories...'
+Rails.logger.debug 'Creating categories...'
 categories.each do |category|
   Category.create!(category)
 end
 
-puts "Created #{Category.count} categories."
+Rails.logger.debug { "Created #{Category.count} categories." }

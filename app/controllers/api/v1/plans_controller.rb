@@ -18,8 +18,8 @@ module Api
         render json: Api::V1::PlanSerializer.new(plans, options).serializable_hash
       end
 
-      def
-        render(json: Api::V1::PlanSerializer.new(@plan).serializable_hash)
+      def show
+        render json: Api::V1::PlanSerializer.new(@plan).serializable_hash
       end
 
       def create

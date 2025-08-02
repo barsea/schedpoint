@@ -1,11 +1,15 @@
 # frozen_string_literal: true
 
-class Api::V1::ActualSerializer
-  include JSONAPI::Serializer
+module Api
+  module V1
+    class ActualSerializer
+      include JSONAPI::Serializer
 
-  # フロントエンドに渡したいカラム名を指定
-  attributes :id, :memo, :start_time, :end_time
+      # フロントエンドに渡したいカラム名を指定
+      attributes :id, :memo, :start_time, :end_time
 
-  # カテゴリ情報も一緒にフロントエンドへ返せるように、関連を定義
-  belongs_to :category
+      # カテゴリ情報も一緒にフロントエンドへ返せるように、関連を定義
+      belongs_to :category
+    end
+  end
 end

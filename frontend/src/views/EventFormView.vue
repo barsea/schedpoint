@@ -1,12 +1,24 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { usePlanStore } from '@/stores/plan'
+import { useActualStore } from '@/stores/actual'
 import { useAuthStore } from '@/stores/auth'
 import CategorySelector from '@/components/CategorySelector.vue'
 
+// 親コンポーネント（今回はルーター）から渡されるデータを受け取るための設定
+// これにより、このフォームが 'plan' と 'actual' のどちらのモードで動作すべきかを判断する
+const props = defineProps({
+  eventType: {
+    type: String,
+    required: true,
+    validator: (value) => ['plan', 'actual'].includes(value),
+  },
+})
+
 const router = useRouter()
 const planStore = usePlanStore()
+const actualStore = useActualStore()
 const authStore = useAuthStore()
 
 // フォームの各入力フィールドに対応するリアクティブなデータ
@@ -14,6 +26,12 @@ const selectedCategoryObject = ref(null) // CategorySelectorからの選択を�
 const startTime = ref('')
 const endTime = ref('')
 const memo = ref('')
+
+// --- 動的なフォームタイトルの設定 ---
+// props.eventType の値に応じて、ページのタイトルを動的に変更する
+const formTitle = computed(() => {
+  return props.eventType === 'plan' ? '予定の作成' : '実績の作成'
+})
 
 // コンポーネントが表示されたときにカテゴリを取得する
 onMounted(() => {
@@ -32,22 +50,28 @@ const handleSubmit = async () => {
   }
 
   // APIに送信するデータを作成
-  const planData = {
-    category_id: selectedCategoryObject.value.id, // カテゴリオブジェクトからIDを取り出す
+  const eventData = {
+    category_id: selectedCategoryObject.value.id,
     start_time: startTime.value,
     end_time: endTime.value,
     memo: memo.value,
   }
 
-  // ストアのアクションを呼び出し
-  const result = await planStore.createPlan(planData)
+  let result
+
+  // props.eventType の値に応じて、呼び出すストアのアクションを切り替える
+  if (props.eventType === 'plan') {
+    result = await planStore.createPlan(eventData)
+  } else {
+    result = await actualStore.createActual(eventData)
+  }
 
   // 作成が成功したらトップページに遷移
   if (result.success) {
-    router.push('/') // カレンダー画面のパスを指定
+    router.push('/')
   } else {
-    // エラー処理（今回はアラートで表示）
-    alert('予定の作成に失敗しました。\n' + (result.errors || []).join('\n'))
+    const eventTypeName = props.eventType === 'plan' ? '予定' : '実績'
+    alert(`${eventTypeName}の作成に失敗しました。\n` + (result.errors || []).join('\n'))
   }
 }
 </script>
@@ -55,7 +79,7 @@ const handleSubmit = async () => {
 <template>
   <div class="min-h-screen bg-gray-100 flex items-center justify-center p-4">
     <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-3xl">
-      <h1 class="text-2xl font-bold text-center mb-6">イベント作成</h1>
+      <h1 class="text-2xl font-bold text-center mb-6">{{ formTitle }}</h1>
       <form @submit.prevent="handleSubmit">
         <!-- カテゴリ選択コンポーネントを組み込み -->
         <!-- v-model:selectedCategory を使用して、CategorySelectorからの選択をcategory変数にバインド -->

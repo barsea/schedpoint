@@ -8,28 +8,43 @@ const authStore = useAuthStore()
 const planStore = usePlanStore()
 const router = useRouter()
 
-const isDropdownOpen = ref(false)
-const dropdown = ref(null)
+// --- ユーザーメニューのドロップダウン関連 ---
+const isUserDropdownOpen = ref(false)
+const userDropdown = ref(null)
 
-const toggleDropdown = () => {
-  isDropdownOpen.value = !isDropdownOpen.value
+const toggleUserDropdown = () => {
+  isUserDropdownOpen.value = !isUserDropdownOpen.value
+  // もう片方のドロップダウンが開いていたら閉じる
+  isCreateDropdownOpen.value = false
+}
+
+// --- 「+作成」ボタンのドロップダウン関連 ---
+const isCreateDropdownOpen = ref(false)
+const createDropdown = ref(null) // テンプレート内の要素を参照するためのref
+const toggleCreateDropdown = () => {
+  isCreateDropdownOpen.value = !isCreateDropdownOpen.value
+  // もう片方のドロップダウンが開いていたら閉じる
+  isUserDropdownOpen.value = false
 }
 
 // メニューの外側をクリックしたかを判定する関数
-const closeDropdown = (event) => {
-  if (dropdown.value && !dropdown.value.contains(event.target)) {
-    isDropdownOpen.value = false
+const closeDropdowns = (event) => {
+  if (userDropdown.value && !userDropdown.value.contains(event.target)) {
+    isUserDropdownOpen.value = false
+  }
+  if (createDropdown.value && !createDropdown.value.contains(event.target)) {
+    isCreateDropdownOpen.value = false
   }
 }
 
 // コンポーネントがマウントされた時にイベントリスナーを追加
 onMounted(() => {
-  window.addEventListener('click', closeDropdown)
+  window.addEventListener('click', closeDropdowns)
 })
 
 // コンポーネントがアンマウントされる時にイベントリスナーを削除
 onUnmounted(() => {
-  window.removeEventListener('click', closeDropdown)
+  window.removeEventListener('click', closeDropdowns)
 })
 
 const handleLogout = () => {
@@ -81,10 +96,10 @@ const handleLogout = () => {
       <!-- ログイン時の表示 -->
       <div v-else class="flex items-center space-x-4">
         <!-- ユーザー名とプルダウンメニュー -->
-        <div class="relative" ref="dropdown">
+        <div class="relative" ref="userDropdown">
           <!-- @clickでプルダウンの表示/非表示を切り替え -->
           <button
-            @click.prevent="toggleDropdown"
+            @click.prevent="toggleUserDropdown"
             class="flex items-center space-x-2 focus:outline-none"
           >
             <span class="text-sm font-medium text-gray-700 dark:text-gray-200">{{
@@ -107,7 +122,7 @@ const handleLogout = () => {
           </button>
           <!-- v-ifでプルダウンメニューの表示を制御 -->
           <div
-            v-if="isDropdownOpen"
+            v-if="isUserDropdownOpen"
             class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-700 rounded-md shadow-lg py-1 z-10"
           >
             <a
@@ -119,13 +134,53 @@ const handleLogout = () => {
             </a>
           </div>
         </div>
-        <!-- 「+ 作成」ボタン -->
-        <RouterLink
-          :to="{ name: 'event-new' }"
-          class="bg-blue-500 hover:bg-blue-700 px-4 py-2 text-sm font-medium text-white rounded-md"
-        >
-          + 作成
-        </RouterLink>
+
+        <!-- 「+ 作成」ボタンをドロップダウンに変更 -->
+        <div class="relative" ref="createDropdown">
+          <!-- ボタン: クリックで isCreateDropdownOpen の状態を切り替える -->
+          <button
+            @click.prevent="toggleCreateDropdown"
+            class="flex items-center bg-blue-500 hover:bg-blue-700 px-4 py-2 text-sm font-medium text-white rounded-md"
+          >
+            <span>+ 作成</span>
+            <svg
+              class="w-4 h-4 ml-1"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 9l-7 7-7-7"
+              ></path>
+            </svg>
+          </button>
+          <!-- ドロップダウンメニュー: isCreateDropdownOpen が true の時だけ表示 -->
+          <div
+            v-if="isCreateDropdownOpen"
+            class="absolute right-0 mt-2 w-32 bg-white rounded-md shadow-lg py-1 z-10"
+          >
+            <!-- 予定作成ページへのリンク -->
+            <RouterLink
+              to="/events/new/plan"
+              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+              @click="isCreateDropdownOpen = false"
+            >
+              予定
+            </RouterLink>
+            <!-- 実績作成ページへのリンク -->
+            <RouterLink
+              to="/events/new/actual"
+              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+              @click="isCreateDropdownOpen = false"
+            >
+              実績
+            </RouterLink>
+          </div>
+        </div>
       </div>
     </div>
   </div>

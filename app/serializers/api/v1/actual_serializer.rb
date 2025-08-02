@@ -2,7 +2,7 @@
 
 module Api
   module V1
-    class PlanSerializer
+    class ActualSerializer
       include JSONAPI::Serializer
 
       # フロントエンドに渡したいカラム名を指定

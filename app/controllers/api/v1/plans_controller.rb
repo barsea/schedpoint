@@ -13,14 +13,13 @@ module Api
         day_end = date.end_of_day
 
         plans = current_user.plans.includes(:category).where('start_time <= ? AND end_time >= ?', day_end, day_start)
-        # シリアライザを呼び出すためのオプション
-        # これでPlanに紐づくCategoryの情報も含めてくれます
+        # シリアライザを呼び出すためのオプション（これでActualに紐づくCategoryの情報も含めてくれる）
         options = { include: [:category] }
         render json: Api::V1::PlanSerializer.new(plans, options).serializable_hash
       end
 
-      def show
-        render json: Api::V1::PlanSerializer.new(@plan).serializable_hash
+      def
+        render(json: Api::V1::PlanSerializer.new(@plan).serializable_hash)
       end
 
       def create

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Api::V1::PlanSerializer
+class Api::V1::ActualSerializer
   include JSONAPI::Serializer
 
   # フロントエンドに渡したいカラム名を指定

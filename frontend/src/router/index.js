@@ -21,9 +21,10 @@ const router = createRouter({
       component: () => import('../views/AboutView.vue'),
     },
     {
-      path: '/events/new',
+      path: '/events/new/:eventType',
       name: 'event-new',
       component: EventFormView,
+      props: true,
     },
     {
       path: '/signup',

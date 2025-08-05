@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
 import { useAuthStore } from './auth'
+import { useActualStore } from './actual'
 
 // 'YYYY-MM-DD'形式の、今日の日付文字列を返すヘルパー関数
 const getTodayString = () => {
@@ -114,7 +115,7 @@ export const usePlanStore = defineStore('plan', {
     },
 
     /**
-     * 現在の日付を変更し、その日付の予定を再取得するアクション
+     * 現在の日付を変更し、その日付の予定と実績を再取得するアクション
      * @param {number} days - 変更する日数（-1なら昨日、1なら明日）
      */
     async changeDate(days) {
@@ -125,16 +126,27 @@ export const usePlanStore = defineStore('plan', {
       // 'YYYY-MM-DD'形式の文字列に戻してstateを更新
       this.currentDate = newDate.toISOString().split('T')[0]
 
-      // 新しい日付で予定データを再取得
-      await this.fetchPlans(this.currentDate)
+      // actualStoreをインスタンス化
+      const actualStore = useActualStore()
+      // Promise.allを使って、予定の取得と実績の取得を「同時に」開始する
+      // これにより、片方の通信が終わるのを待たずに済むため、表示が少し速くなる
+      await Promise.all([
+        this.fetchPlans(this.currentDate),
+        actualStore.fetchActuals(this.currentDate),
+      ])
     },
 
     /**
-     * 日付を今日にリセットし、今日の予定を再取得するアクション
+     * 日付を今日にリセットし、今日の予定と実績を再取得するアクション
      */
     async resetToToday() {
       this.currentDate = getTodayString()
-      await this.fetchPlans(this.currentDate)
+
+      const actualStore = useActualStore()
+      await Promise.all([
+        this.fetchPlans(this.currentDate),
+        actualStore.fetchActuals(this.currentDate),
+      ])
     },
 
     /**

@@ -1,51 +1,32 @@
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted, watch } from 'vue'
 import TheHeader from '../components/TheHeader.vue'
 import TimeAxis from '../components/TimeAxis.vue'
 import ScheduleColumn from '../components/ScheduleColumn.vue'
 import { usePlanStore } from '@/stores/plan'
+import { useActualStore } from '@/stores/actual'
+import { useAuthStore } from '@/stores/auth'
 import PlanDetailModal from '../components/PlanDetailModal.vue'
 
 const planStore = usePlanStore()
+const actualStore = useActualStore()
+const authStore = useAuthStore()
 
-// --- 実績のモックデータ ---
-const actualEvents = [
-  {
-    id: 101,
-    category: '開発 (実績)',
-    startTime: new Date('2025-06-26T09:15:00'), // 予定より少し遅れて開始
-    endTime: new Date('2025-06-26T10:45:00'),
+watch(
+  // 監視対象のデータ
+  () => authStore.isLoggedIn,
+  // 監視対象のデータが変化したときに実行される関数
+  (isLoggedIn) => {
+    // ログイン状態が true になった瞬間にデータを取得する
+    if (isLoggedIn) {
+      const dateToFetch = planStore.currentDate
+      Promise.all([planStore.fetchPlans(dateToFetch), actualStore.fetchActuals(dateToFetch)])
+    }
   },
-  {
-    id: 102,
-    category: '休憩 (実績)',
-    startTime: new Date('2025-06-26T12:00:00'),
-    endTime: new Date('2025-06-26T12:45:00'), // 予定より長めに休憩
-  },
-  {
-    id: 103,
-    category: '学習 (実績)',
-    startTime: new Date('2025-06-26T14:30:00'), // 予定より遅れて開始
-    endTime: new Date('2025-06-26T16:00:00'),
-  },
-  {
-    id: 104,
-    category: 'ミーティング (実績)',
-    startTime: new Date('2025-06-26T08:00:00'),
-    endTime: new Date('2025-06-26T08:30:00'), // 予定より早く終了
-  },
-  {
-    id: 105,
-    category: '短い予定 (実績)',
-    startTime: new Date('2025-06-26T17:00:00'),
-    endTime: new Date('2025-06-26T17:05:00'), // さらに短い実績
-  },
-]
-
-onMounted(() => {
-  const today = new Date().toISOString().split('T')[0]
-  planStore.fetchPlans(today)
-})
+  // { immediate: true } オプションにより、コンポーネントがマウントされた直後にも、watch内の処理が一度だけ実行される。
+  // これにより、すでにログイン済みの状態でページをリロードした場合にも対応できます。
+  { immediate: true },
+)
 
 // イベントを処理してモーダルを開く関数を定義
 const handlePlanClick = (plan) => {
@@ -72,7 +53,7 @@ const handlePlanClick = (plan) => {
         <ScheduleColumn title="予定" :events="planStore.plans" @plan-click="handlePlanClick" />
       </div>
       <div class="w-[700px] min-h-[1216px] flex-grow bg-white">
-        <ScheduleColumn title="実績" :events="actualEvents" />
+        <ScheduleColumn title="実績" :events="actualStore.actuals" />
       </div>
     </div>
   </div>

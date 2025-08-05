@@ -1,19 +1,32 @@
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted, watch } from 'vue'
 import TheHeader from '../components/TheHeader.vue'
 import TimeAxis from '../components/TimeAxis.vue'
 import ScheduleColumn from '../components/ScheduleColumn.vue'
 import { usePlanStore } from '@/stores/plan'
 import { useActualStore } from '@/stores/actual'
+import { useAuthStore } from '@/stores/auth'
 import PlanDetailModal from '../components/PlanDetailModal.vue'
 
 const planStore = usePlanStore()
 const actualStore = useActualStore()
+const authStore = useAuthStore()
 
-onMounted(() => {
-  const today = new Date().toISOString().split('T')[0]
-  Promise.all([planStore.fetchPlans(today), actualStore.fetchActuals(today)])
-})
+watch(
+  // 監視対象のデータ
+  () => authStore.isLoggedIn,
+  // 監視対象のデータが変化したときに実行される関数
+  (isLoggedIn) => {
+    // ログイン状態が true になった瞬間にデータを取得する
+    if (isLoggedIn) {
+      const dateToFetch = planStore.currentDate
+      Promise.all([planStore.fetchPlans(dateToFetch), actualStore.fetchActuals(dateToFetch)])
+    }
+  },
+  // { immediate: true } オプションにより、コンポーネントがマウントされた直後にも、watch内の処理が一度だけ実行される。
+  // これにより、すでにログイン済みの状態でページをリロードした場合にも対応できます。
+  { immediate: true },
+)
 
 // イベントを処理してモーダルを開く関数を定義
 const handlePlanClick = (plan) => {

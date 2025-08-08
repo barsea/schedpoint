@@ -5,9 +5,27 @@ import { useAuthStore } from './auth'
 export const useActualStore = defineStore('actual', {
   state: () => ({
     actuals: [],
+    isModalOpen: false,
+    selectedActual: null,
   }),
 
   actions: {
+    /**
+     * 実績詳細モーダルを開くアクション
+     * @param {object} actual - 表示する実績オブジェクト
+     */
+    openActualModal(actual) {
+      this.selectedActual = actual
+      this.isModalOpen = true
+    },
+
+    /**
+     * 実績詳細モーダルを閉じるアクション
+     */
+    closeActualModal() {
+      this.isModalOpen = false
+      this.selectedActual = null
+    },
     async fetchActuals(date) {
       const authStore = useAuthStore()
       if (!authStore.token) {

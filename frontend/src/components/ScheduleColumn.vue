@@ -1,14 +1,14 @@
 <script setup>
 import EventBlock from './EventBlock.vue'
 
-const emit = defineEmits(['plan-click'])
+const emit = defineEmits(['plan-click', 'actual-click'])
 
 // 親からeventsデータを受け取るようにPropsを定義
-defineProps({
+const props = defineProps({
   title: String,
   events: {
     type: Array,
-    default: () => [], // デフォルト値として空の配列を設定
+    default: () => [],
   },
 })
 
@@ -49,11 +49,16 @@ const getEventStyle = (event) => {
 
 /**
  * クリックイベントを処理し、親コンポーネントに通知する関数
+ * props.titleに応じて、発行するイベントを切り替える。
  * @param {object} event - クリックされた予定オブジェクト
  */
-const handlePlanClick = (event) => {
-  // 'plan-click' という名前のイベントを発行し、クリックされた予定データを一緒に渡します。
-  emit('plan-click', event)
+const handleEventClick = (event) => {
+  if (props.title === '予定') {
+    // 'plan-click' という名前のイベントを発行し、クリックされた予定データを一緒に渡す。
+    emit('plan-click', event)
+  } else if (props.title === '実績') {
+    emit('actual-click', event)
+  }
 }
 </script>
 
@@ -63,14 +68,14 @@ const handlePlanClick = (event) => {
       {{ title }}
     </h2>
     <div v-for="n in 24" :key="n" class="h-12 pr-2 border-b border-gray-200"></div>
-    <!-- EventBlockがクリックされたらhandlePlanClickを呼び出す -->
+    <!-- EventBlockがクリックされたらhandleEventClickを呼び出す -->
     <EventBlock
       v-for="event in events"
       :key="event.id"
       :category-name="event.category?.name || event.memo"
       :time="`${formatTime(event.startTime)} - ${formatTime(event.endTime)}`"
       :style="getEventStyle(event)"
-      @click="handlePlanClick(event)"
+      @click="handleEventClick(event)"
       class="cursor-pointer"
     />
   </div>

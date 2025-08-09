@@ -4,6 +4,7 @@ module Api
   module V1
     class ActualsController < ApplicationController
       before_action :authenticate_user!
+      before_action :set_actual, only: %i[update destroy]
 
       def index
         # フロントエンドから送られてきた日付パラメータを取得する
@@ -35,7 +36,24 @@ module Api
         end
       end
 
+      def update
+        if @actual.update(actual_params)
+          render json: Api::V1::ActualSerializer.new(@actual).serializable_hash, status: :ok
+        else
+          render json: { errors: @actual.errors.full_messages }, status: :unprocessable_entity
+        end
+      end
+
+      def destroy
+        @actual.destroy
+        head :no_content
+      end
+
       private
+
+      def set_actual
+        @actual = current_user.actuals.find(params[:id])
+      end
 
       def actual_params
         params.require(:actual).permit(:memo, :start_time, :end_time, :category_id)

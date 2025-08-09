@@ -1,0 +1,14 @@
+ja:
+  activerecord:
+    errors:
+      messages:
+        too_long: "は%{count}文字以内で入力してください"
+    attributes:
+      plan:
+        memo: "メモ"
+        start_time: "開始時刻"
+        end_time: "終了時刻"
+      actual:
+        memo: "メモ"
+        start_time: "開始時刻"
+        end_time: "終了時刻"

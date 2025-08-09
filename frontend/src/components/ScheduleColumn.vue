@@ -68,9 +68,6 @@ const getEventStyle = (event) => {
   // 差分が0に近くなる場合も考慮し、最低でも1分は確保する
   durationMinutes = Math.max(durationMinutes, 1)
 
-  // 最低30分の高さ
-  durationMinutes = Math.max(durationMinutes, 30)
-
   const topPosition = HEADER_HEIGHT + (totalStartMinutes / 60) * SLOT_HEIGHT
   const eventHeight = (durationMinutes / 60) * SLOT_HEIGHT
 

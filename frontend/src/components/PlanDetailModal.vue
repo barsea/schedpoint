@@ -142,6 +142,7 @@ const closeModal = () => {
             class="shadow appearance-none border rounded-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline resize-y"
             placeholder="イベントの詳細やメモを入力"
           ></textarea>
+          <small class="text-gray-500">最大100文字</small>
         </div>
 
         <div class="flex items-center justify-between mt-6">

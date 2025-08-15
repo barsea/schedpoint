@@ -96,8 +96,6 @@ end
 
 ### 4. 主要なモデルのコード
 
-※ `app/models/`配下のファイル内容です。
-
 **`user.rb`**
 
 ```ruby
@@ -122,9 +120,50 @@ end
 **`plan.rb`**
 
 ```ruby
+# frozen_string_literal: true
+
 class Plan < ApplicationRecord
   belongs_to :user
   belongs_to :category
+
+  validates :start_time, presence: true
+  validates :end_time, presence: true
+  validates :memo, length: { maximum: 100 }
+  validate :start_time_cannot_be_after_end_time
+
+  private
+
+  def start_time_cannot_be_after_end_time
+    return if start_time.blank? || end_time.blank?
+    return unless start_time > end_time
+
+    errors.add(:start_time, 'は終了時刻より前に設定してください')
+  end
+end
+```
+
+**`actual.rb`**
+
+```ruby
+# frozen_string_literal: true
+
+class Actual < ApplicationRecord
+  belongs_to :user
+  belongs_to :category
+
+  validates :start_time, presence: true
+  validates :end_time, presence: true
+  validates :memo, length: { maximum: 100 }
+  validate :start_time_cannot_be_after_end_time
+
+  private
+
+  def start_time_cannot_be_after_end_time
+    return if start_time.blank? || end_time.blank?
+    return unless start_time > end_time
+
+    errors.add(:start_time, 'は終了時刻より前に設定してください')
+  end
 end
 ```
 
@@ -158,28 +197,35 @@ end
 
 ### 6. 重要な決定事項
 
-- **アーキテクチャ**: 当初は通常の Rails アプリとして開発を開始したが、途中から**Rails を API モード**、**フロントエンドを Vue.js による SPA**とする構成に方針転換。
-- **UI/UX**: MVP（Minimum Viable Product）段階では、PC の画面サイズでも視認性を確保するため、当初の「週間表示」から「1 日表示」に表示単位を絞ることを決定。予定の編集・削除は、画面遷移を伴わない**モーダルウィンドウ**で行うことで、スムーズな操作感を実現。
-- **認証**: `devise`と`devise-jwt`を使用し、セッションに依存しない**ステートレスな JWT 認証**を実装。
+- **アーキテクチャ**: Rails を API モード、フロントエンドを Vue.js による SPA とする構成。
+- **UI/UX**:
+  - 1 日単位でのカレンダー表示。
+  - 予定・実績の作成は、共通化されたフォームコンポーネントを使用。
+  - 更新・削除は、画面遷移を伴わないモーダルウィンドウで実行。
+  - 「+作成」ボタンは、「予定」「実績」を選択できるドロップダウンメニューとして実装。
+- **認証**: `devise-jwt`を利用したステートレスな JWT 認証。
 - **API 設計**:
   - 将来の拡張性を考慮し、`api/v1/`のように**バージョンを明記した RESTful API**として設計。
   - コア機能は`EventsController`で一つにまとめるのではなく、責務を明確にするため`PlansController`と`ActualsController`に分割。
   - **API レスポンスの統一**: `jsonapi-serializer`を全面的に採用し、すべての API エンドポイントで構造化された JSON を返すように設計。これによりフロントエンドでのデータハンドリングを簡素化し、保守性を向上。
-- **データの一貫性**: `db/seeds.rb` を活用し、アプリケーションの初期データ（カテゴリ一覧など）を定義。これにより、どの開発環境でも同じデータでアプリケーションを起動できる状態を担保。
-- **タイムゾーン**: バックエンドは**UTC**で時刻を管理し、フロントエンド側で日本時間（JST）に変換して表示する、グローバルスタンダードな方式を採用。
-- **テスト**: バックエンド API の動作確認は**Postman**で実施。テストフレームワークとして**RSpec**を導入済み。
+- **データ品質**:
+  - バックエンドのモデル層で、時間の前後関係や文字数などのバリデーションを実装。
+  - Rails の i18n 機能を導入し、エラーメッセージを日本語に統一。
+- **タイムゾーン**: バックエンドは UTC、フロントエンドは JST で管理。
+- **テスト**: Postman による API の動作確認と、ブラウザでの手動総合テストを実施。テストフレームワークとして**RSpec**を導入済み。
 - **コード品質**: `RuboCop`と`Prettier`を導入し、保存時の自動整形を設定することで、コードの品質と一貫性を担保。
 
 ### 7. 現在の状況と次のタスク
 
-- **【完了】** ユーザー認証機能（新規登録、ログイン、ログアウト）
-- **【完了】** 「予定」の CRUD 管理機能（一覧表示、新規作成、詳細表示、更新、削除）
-- **【TODO】** 以下の優先順位で、残りの機能実装と不具合修正を進める。
-  1.  **「実績」の作成機能の実装 (`feat/create-actual`)**: バックエンドからフロントエンドまで、実績を作成する機能を一気通貫で実装する。
-  2.  **「実績」の表示機能の実装 (`feat/read-actuals`)**: 作成した実績をカレンダー画面に表示する機能を実装する。
-  3.  **「実績」の更新・削除機能の実装 (`feat/update-delete-actuals`)**: モーダルから実績の更新と削除ができる機能を実装する。
-  4.  **日付またぎ表示の修正**: 日付をまたぐ予定が、各日付のカラムで正しく分割表示されるようにフロントエンドのロジックを修正する。
-  5.  **入力値バリデーションの強化**: 終了時刻が開始時刻より前にならないように、バックエンドでバリデーションを追加する。
+- **【完了】** ユーザー認証機能 (CRUD)
+- **【完了】** 「予定」管理機能 (CRUD)
+- **【完了】** 「実績」管理機能 (CRUD)
+- **【完了】** 日付またぎ表示の修正
+- **【完了】** バックエンドのバリデーション強化
+- **【TODO】** 以下のロードマップに沿って、デプロイに向けた最終準備を進める。
+  1. **品質向上**: 総合テストの実施、README の整備。
+  2. **デプロイ準備**: 本番環境用データベースの設定、環境変数の設定。
+  3. **デプロイ**: ホスティングサービスを選定し、アプリケーションを公開する。
 
 ### 8. ペアプログラミングにおけるメンターへの要望 (サポートする上での留意点)
 

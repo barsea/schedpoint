@@ -30,6 +30,7 @@ gem 'bootsnap', require: false
 
 # 開発環境とテスト環境でのみ使用するGem
 group :development, :test do
+  gem 'dotenv-rails'
   gem 'debug', platforms: %i[mri windows]
   gem 'rspec-rails', '~> 6.1'
 end
@@ -46,4 +47,9 @@ end
 group :test do
   gem 'capybara'
   gem 'selenium-webdriver'
+end
+
+# 本番環境でのみ使用するGem
+group :production do
+  gem 'pg'
 end

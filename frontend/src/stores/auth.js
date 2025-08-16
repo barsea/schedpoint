@@ -33,7 +33,8 @@ export const useAuthStore = defineStore('auth', {
 
     async signup(name, email, password) {
       try {
-        await axios.post('http://localhost:3000/users', {
+        const apiUrl = `${import.meta.env.VITE_API_BASE_URL}/users`
+        await axios.post(apiUrl, {
           user: {
             name: name,
             email: email,
@@ -49,7 +50,8 @@ export const useAuthStore = defineStore('auth', {
 
     async login(email, password) {
       try {
-        const response = await axios.post('http://localhost:3000/users/sign_in', {
+        const apiUrl = `${import.meta.env.VITE_API_BASE_URL}/users/sign_in`
+        const response = await axios.post(apiUrl, {
           user: { email, password },
         })
 
@@ -90,7 +92,9 @@ export const useAuthStore = defineStore('auth', {
       }
       try {
         const headers = { Authorization: this.token }
-        const response = await axios.get('http://localhost:3000/api/v1/categories', { headers })
+
+        const apiUrl = `${import.meta.env.VITE_API_BASE_URL}/api/v1/categories`
+        const response = await axios.get(apiUrl, { headers })
 
         // jsonapi-serializer形式のデータを整形してstateに保存
         this.categories = response.data.data.map((item) => ({

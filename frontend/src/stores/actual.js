@@ -40,9 +40,8 @@ export const useActualStore = defineStore('actual', {
           // authStoreからトークンを取得するように変更
           Authorization: authStore.token,
         }
-        const response = await axios.get(`http://localhost:3000/api/v1/actuals?date=${date}`, {
-          headers,
-        })
+        const apiUrl = `${import.meta.env.VITE_API_BASE_URL}/api/v1/actuals?date=${date}`
+        const response = await axios.get(apiUrl, { headers })
         const actualData = response.data.data
         const includedData = response.data.included || []
         const categoryMap = new Map(
@@ -84,11 +83,8 @@ export const useActualStore = defineStore('actual', {
           // authStoreからトークンを取得するように変更
           Authorization: authStore.token,
         }
-        const response = await axios.post(
-          'http://localhost:3000/api/v1/actuals',
-          { actual: newActual },
-          { headers },
-        )
+        const apiUrl = `${import.meta.env.VITE_API_BASE_URL}/api/v1/actuals`
+        const response = await axios.post(apiUrl, { actual: newActual }, { headers })
         const newActualData = response.data.data
         const newCategoryId = newActualData.relationships.category.data.id
         const category = authStore.categories.find((c) => String(c.id) === String(newCategoryId))
@@ -128,11 +124,8 @@ export const useActualStore = defineStore('actual', {
           Authorization: authStore.token,
         }
         // Rails APIが受け取る形式 { actual: { ... } } に合わせてデータを整形
-        const response = await axios.put(
-          `http://localhost:3000/api/v1/actuals/${id}`, // URLにIDを含める
-          { actual: updateData },
-          { headers },
-        )
+        const apiUrl = `${import.meta.env.VITE_API_BASE_URL}/api/v1/actuals/${id}`
+        const response = await axios.put(apiUrl, { actual: updateData }, { headers })
 
         // --- ここからが画面への即時反映処理 ---
         const updatedActualData = response.data.data
@@ -180,8 +173,9 @@ export const useActualStore = defineStore('actual', {
         const headers = {
           Authorization: authStore.token,
         }
+        const apiUrl = `${import.meta.env.VITE_API_BASE_URL}/api/v1/actuals/${actualId}`
         // DELETEリクエストを送信
-        await axios.delete(`http://localhost:3000/api/v1/actuals/${actualId}`, { headers })
+        await axios.delete(apiUrl, { headers })
         // --- 画面への即時反映処理 ---
         // state.actuals配列から、削除したIDと一致しないものだけをフィルタリングして新しい配列を作る
         this.actuals = this.actuals.filter((a) => a.id !== actualId)

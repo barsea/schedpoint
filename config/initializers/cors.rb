@@ -7,11 +7,19 @@
 
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
-    origins 'localhost:5173'
+    # Rails.env.development? で、開発環境か本番環境かを判断します
+    if Rails.env.development?
+      # 開発環境では、これまで通りどこからでもアクセスを許可します
+      origins '*'
+    else
+      # 本番環境では、環境変数で指定されたURLからのみアクセスを許可します
+      origins ENV.fetch('FRONTEND_URL')
+    end
 
     resource '*',
       headers: :any,
-      expose: ['access-token', 'expiry', 'token-type', 'uid', 'client', 'Authorization'],
-      methods: [:get, :post, :put, :patch, :delete, :options, :head]
+      methods: [:get, :post, :put, :patch, :delete, :options, :head],
+      # フロントエンドがAuthorizationヘッダーを読み取れるように設定
+      expose: ['Authorization']
   end
 end

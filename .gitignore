@@ -35,3 +35,6 @@
 /config/master.key
 
 .Ds_Store
+
+# Ignore sensitive environment variables
+.env

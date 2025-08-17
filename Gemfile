@@ -15,9 +15,6 @@ gem 'rack-cors'
 # Webサーバー
 gem 'puma', '>= 5.0'
 
-# Railsの基本機能
-gem 'jbuilder'
-
 # Windows用の設定
 gem 'tzinfo-data', platforms: %i[windows jruby]
 

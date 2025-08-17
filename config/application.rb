@@ -1,6 +1,18 @@
 require_relative "boot"
 
-require "rails/all"
+require "rails"
+# Pick the frameworks you want:
+require "active_model/railtie"
+require "active_job/railtie"
+require "active_record/railtie"
+# require "active_storage/engine" # ActiveStorageを使わない場合はコメントアウト
+require "action_controller/railtie"
+require "action_mailer/railtie"
+# require "action_mailbox/engine" # ActionMailboxを使わない場合はコメントアウト
+# require "action_text/engine" # ActionTextを使わない場合はコメントアウト
+require "action_view/railtie"
+# require "action_cable/engine" # ActionCableを使わない場合はコメントアウト
+# require "rails/test_unit/railtie"
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -22,10 +34,10 @@ module Schedpoint
       g.stylesheets false
       g.javascripts false
       g.helper false
-      g.test_framework :rspec, 
+      g.test_framework :rspec,
                         fixtures: false,
-                        view_specs: false, 
-                        helper_specs: false, 
+                        view_specs: false,
+                        helper_specs: false,
                         routing_specs: false
     end
 

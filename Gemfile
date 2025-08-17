@@ -6,9 +6,6 @@ ruby '3.2.0'
 
 gem 'rails', '~> 7.1.5', '>= 7.1.5.1'
 
-# データベース
-gem 'mysql2', '~> 0.5'
-
 # API関連のGem
 gem 'devise'
 gem 'devise-jwt'
@@ -30,6 +27,7 @@ gem 'bootsnap', require: false
 
 # 開発環境とテスト環境でのみ使用するGem
 group :development, :test do
+  gem 'mysql2', '~> 0.5'
   gem 'dotenv-rails'
   gem 'debug', platforms: %i[mri windows]
   gem 'rspec-rails', '~> 6.1'

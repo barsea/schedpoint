@@ -10,4 +10,3 @@ class CreatePlans < ActiveRecord::Migration[7.1]
     end
   end
 end
-

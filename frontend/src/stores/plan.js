@@ -73,9 +73,8 @@ export const usePlanStore = defineStore('plan', {
         const headers = {
           Authorization: authStore.token,
         }
-        const response = await axios.get(`http://localhost:3000/api/v1/plans?date=${date}`, {
-          headers,
-        })
+        const apiUrl = `${import.meta.env.VITE_API_BASE_URL}/api/v1/plans?date=${date}`
+        const response = await axios.get(apiUrl, { headers })
 
         // jsonapi-serializerからのレスポンスを分解
         const planData = response.data.data
@@ -166,11 +165,8 @@ export const usePlanStore = defineStore('plan', {
         }
 
         // Rails APIが受け取る形式 { plan: { ... } } に合わせてデータを整形
-        const response = await axios.post(
-          'http://localhost:3000/api/v1/plans',
-          { plan: planData },
-          { headers },
-        )
+        const apiUrl = `${import.meta.env.VITE_API_BASE_URL}/api/v1/plans`
+        const response = await axios.post(apiUrl, { plan: planData }, { headers })
 
         const newPlanData = response.data.data
         const newCategoryId = newPlanData.relationships.category.data.id
@@ -219,11 +215,8 @@ export const usePlanStore = defineStore('plan', {
         }
 
         // Rails APIが受け取る形式 { plan: { ... } } に合わせてデータを整形
-        const response = await axios.put(
-          `http://localhost:3000/api/v1/plans/${id}`, // URLにIDを含める
-          { plan: updateData },
-          { headers },
-        )
+        const apiUrl = `${import.meta.env.VITE_API_BASE_URL}/api/v1/plans/${id}`
+        const response = await axios.put(apiUrl, { plan: updateData }, { headers })
 
         // --- ここからが画面への即時反映処理 ---
         const updatedPlanData = response.data.data
@@ -275,8 +268,9 @@ export const usePlanStore = defineStore('plan', {
           Authorization: authStore.token,
         }
 
+        const apiUrl = `${import.meta.env.VITE_API_BASE_URL}/api/v1/plans/${planId}`
         // DELETEリクエストを送信
-        await axios.delete(`http://localhost:3000/api/v1/plans/${planId}`, { headers })
+        await axios.delete(apiUrl, { headers })
 
         // --- 画面への即時反映処理 ---
         // state.plans配列から、削除したIDと一致しないものだけをフィルタリングして新しい配列を作る

@@ -13,4 +13,15 @@ class User < ApplicationRecord
   has_many :actuals, dependent: :destroy
 
   validates :name, presence: true
+
+  # db:seed実行時にjtiが自動で設定されずにエラーになる問題への対策として、
+  # Userレコードが作成される直前に、必ずjtiを生成するコールバックを追加。
+  before_create :set_jti
+
+  private
+
+  def set_jti
+    # self.jtiに値がセットされていない場合のみ、新しいUUIDを生成してセットする
+    self.jti ||= SecureRandom.uuid
+  end
 end

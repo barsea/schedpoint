@@ -93,7 +93,7 @@
 
 ### ER 図
 
-![ER図](images_development/ER図（MVP段階）_v2.png)
+![ER図](images_development/ER図（MVP段階）_v3.png)
 
 ### users テーブル
 

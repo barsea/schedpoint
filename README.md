@@ -2,124 +2,207 @@
 
 ## 1. アプリ概要
 
-**SchedPoint** は、日々の「予定」と「実績」を時間軸上で可視化し、比較・分析することで、ユーザーの時間管理能力の向上をサポートする Web アプリケーションです。将来的には、予定と実績の差を「ポイント」として定量化し、日々の成長を可視化することを目指しており、これが「SchedPoint」という名称の由来です。
+SchedPoint は、ユーザーの時間管理能力の向上をサポートする Web アプリケーションです。  
+「予定」と「実績（実際の行動）」を記録・比較し、「計画通りに進んだか」「何にどれだけ時間を使ったか」を直感的に把握することで、自身の時間感覚のズレを認識し、より現実的で精度の高いスケジュール管理ができるようになることを目指します。
 
 このアプリケーションは、Web 系エンジニアへの転職を目指すポートフォリオとして制作されました。
 
-### **アプリケーション URL**
+## 2. ターゲットユーザー
 
-- **フロントエンド:** [https://schedpoint-frontend.onrender.com/](https://schedpoint-frontend.onrender.com/)
-- **バックエンド API:** [https://schedpoint-api.onrender.com/](https://schedpoint-api.onrender.com/)
+- **ペルソナ:** 自己研鑽に励むビジネスマン
+  - 例：30 歳男性、エンジニア、都内一人暮らし、年収 400 万円
+- **ユーザーが抱える現状の悩み:**
+  - 休日や日々の業務外で自己学習の時間を確保したいが、他のことに時間を使ってしまうことがある
+  - 1 日の終わりに「もっと時間を有効に使えたはずだ」と後悔することがある
+  - 既存のカレンダーアプリでは、予定と実績の比較がしっくりこない
+- **ユーザーがアプリに期待すること:**
+  - 予定通りに行動できたか、できなかったかを客観視したい
+  - 自身の行動パターンから改善点を見つけ、今後の行動改善に活かしたい
 
-### **テスト用アカウント**
+## 3. 解決したい課題
 
-- **Email:** `test@example.com`
-- **Password:** `password`
+- ユーザーが時間の使い方を客観的に把握し、生産性の低い行動パターンに気づきにくいこと
+- 既存のカレンダーアプリでは、予定と実績のシンプルな比較が不十分であること
 
----
+## 4. 主な機能 (MVP 段階)
 
-## 2. 利用方法
+### 4.1. ユーザー認証機能
 
-1.  新規登録ページからアカウントを作成するか、上記のテスト用アカウントでログインします。
-2.  ログイン後、カレンダー画面右上の「+作成」ボタンから「予定」または「実績」を登録します。
-3.  登録した予定や実績をクリックするとモーダルが開き、内容の更新・削除ができます。
-4.  ヘッダーの日付ナビゲーション（「前日」「翌日」「今日」）で、表示する日付を切り替えられます。
+- 新規ユーザー登録機能
+- ログイン、ログアウト機能
+- JWT（JSON Web Token）を利用した、安全なトークンベース認証
+- ログイン状態の永続化（ブラウザをリロードしてもログイン状態を維持）
 
----
+### 4.2. カレンダー表示機能
 
-## 3. 目指した課題解決
+- ログインしているユーザーの「予定」と「実績」を時間情報に基づいて並べてカレンダー上に表示する
+- 1 日単位で表示する
+- 日付移動のナビゲーション機能（前日へ、翌日へ、今日へ戻る）を実装する
+- 日付をまたぐ予定・実績も、各日に分割して正しく表示する
 
-「もっと時間を有効に使えたはずだ」と後悔しがちなビジネスパーソンが、自身の時間の使い方を客観的に把握し、生産性の低い行動パターンに気づくきっかけを提供することを目指しました。
+### 4.3. 予定登録機能 (CRUD)
 
-「計画（予定）」と「現実（実績）」を並べて比較することで、自身の時間感覚のズレを認識し、より現実的で精度の高いスケジュール管理ができるようになることをサポートします。
+- ログインしているユーザー自身の予定を登録・編集・削除できる
+  - カテゴリ
+  - 開始日時
+  - 終了日時
+  - メモ
 
----
+### 4.4. 実績登録機能 (CRUD)
 
-## 4. 主な機能
+- ログインしているユーザー自身の実績を登録・編集・削除できる
+  - カテゴリ
+  - 開始日時
+  - 終了日時
+  - メモ
 
-- **ユーザー認証**: JWT(JSON Web Token)を利用した、安全なトークンベース認証を実装。ログイン状態は永続化されます。
-- **カレンダー表示**: 1 日単位で「予定」と「実績」を並べて表示。日付移動もスムーズに行えます。日付をまたぐ予定も正しく分割表示されます。
-- **予定・実績の CRUD 管理**: カレンダーから直感的に予定や実績を作成。クリックすればモーダルが開き、更新・削除も簡単に行えます。
-- **動的なデータ連携**: 予定・実績の作成・更新・削除は、画面をリロードすることなくカレンダーに即時反映されます。
-- **堅牢なバックエンド**: Rails のバリデーション機能を活用し、不正なデータ（時間の逆転、長すぎるメモなど）が登録されるのを防ぎます。エラーメッセージも日本語で表示されます。
+### 4.5. その他
 
----
+- **カテゴリ管理機能:** MVP 段階では、データベースで管理されたカテゴリ一覧を API 経由で動的に取得し表示する（将来的にはユーザーによる CRUD 操作を可能にすることを検討している）
+- **データ紐付け:** MVP 段階では予定と実績は紐付けせず、各データが持つ時間情報に基づいてカレンダー上に並べて表示する
+- **バックエンドバリデーション**: 終了時刻が開始時刻より前にならない、メモが長すぎるといった不正なデータが登録されるのを防ぐ。エラーメッセージは日本語で表示される。
 
 ## 5. 使用技術
 
-### バックエンド
+**バックエンド**
 
-- **言語**: Ruby 3.2.0
-- **フレームワーク**: Ruby on Rails 7.1 (API モード)
-- **データベース**: MySQL (開発環境), PostgreSQL (本番環境)
-- **認証**: Devise, Devise-JWT
-- **API**: `jsonapi-serializer` を用いた RESTful API (ver. `/api/v1/`)
-- **Web サーバー**: Puma
+- Ruby 3.2.0
+- Ruby on Rails 7.1 (API モード)
+- データベース: MySQL
+- 認証: Devise, Devise-JWT
+- API 設計:
+  - RESTful API
+  - バージョン管理 (`/api/v1/`)
+  - `jsonapi-serializer` による安全な JSON レスポンス生成
+- テスト: Postman による API エンドポイントの動作確認
+- コード品質: RuboCop
 
-### フロントエンド
+**フロントエンド**
 
-- **言語**: JavaScript
-- **フレームワーク**: Vue.js 3 (Composition API)
-- **状態管理**: Pinia
-- **HTTP クライアント**: Axios
-- **ルーティング**: Vue Router
-- **UI/スタイリング**: Tailwind CSS, Font Awesome
+- Vue.js 3 (Composition API)
+- 状態管理: Pinia
+- HTTP クライアント: Axios
+- ルーティング: Vue Router
+- UI フレームワーク: Tailwind CSS
+- コード品質: Prettier
 
-### インフラ・開発環境
+**開発環境**
 
-- **デプロイ**: Render (Web Service / Static Site)
-- **コード品質**: RuboCop, Prettier (保存時自動整形)
-- **テスト**: Postman (API エンドポイントテスト), 手動総合テスト
-- **実行環境**: foreman
+- foreman
 
----
+## 6. 画面イメージ
 
-## 6. 開発環境構築手順 (ローカル)
-
-1.  **リポジトリをクローン:**
-
-        git clone https://github.com/barsea/schedpoint.git
-        cd schedpoint
-
-2.  **バックエンドのセットアップ:**
-
-        # Gemのインストール
-        bundle install
-
-        # データベースの作成とマイグレーション、初期データの投入
-        rails db:create
-        rails db:migrate
-        rails db:seed
-
-3.  **フロントエンドのセットアップ:**
-
-        # frontendディレクトリに移動
-        cd frontend
-
-        # npmパッケージのインストール
-        npm install
-
-4.  **環境変数の設定:**
-    プロジェクトのルートに`.env`ファイルを作成し、必要な環境変数を設定します。
-
-        SECRET_KEY_BASE="bin/rails secretで生成したキー"
-        DEVISE_JWT_SECRET_KEY="bin/rails secretで生成したキー"
-
-5.  **アプリケーションの起動:**
-    プロジェクトのルートディレクトリに戻り、`foreman`を使ってバックエンドとフロントエンドを同時に起動します。
-
-        cd ..
-        foreman start -f Procfile.dev
-
-    ブラウザで `http://localhost:5173` にアクセスしてください。
-
----
+- **ユーザー新規登録画面、ログイン画面**
+- **カレンダー画面:** 1 日表示形式で、時間軸に沿って「予定」と「実績」を並べて表示。「＋作成」ボタン（ドロップダウン形式）や日付移動ボタンを配置
+- **予定・実績作成画面:** カテゴリ選択、日時指定、メモ入力欄を配置した共通フォーム画面
+- **予定・実績 詳細/編集モーダル:** 既存の予定や実績をクリックすると表示され、内容の更新・削除が可能なモーダルウィンドウ
 
 ## 7. 今後の展望 (MVP 以降)
 
 - 週間/月間カレンダー表示機能
-- レスポンシブ対応
+- レスポンシブ対応（縦長画面では 3 日間程度の表示）
 - ユーザーによるカテゴリ管理機能
 - 予定と実績の時間帯重複チェック機能
-- Google カレンダーとの API 連携
-- 生成 AI を活用した行動改善提案機能
+- 予定遂行度合いを点数化する機能
+- 点数をグラフ表示し点数の推移を可視化する機能
+- Google カレンダーと API 連携し「予定」を自動入力する機能
+- 生成 AI の API を活用し AI による行動改善提案機能
+
+## 8. 開発環境構築手順 (ローカル)
+
+1.  **リポジトリをクローン:**
+
+    ```bash
+    git clone [https://github.com/](https://github.com/)[あなたのGitHubユーザー名]/schedpoint.git
+    cd schedpoint
+    ```
+
+2.  **バックエンドのセットアップ:**
+
+    ```bash
+    # Gemのインストール
+    bundle install
+
+    # データベースの作成とマイグレーション、初期データの投入
+    rails db:create
+    rails db:migrate
+    rails db:seed
+    ```
+
+3.  **フロントエンドのセットアップ:**
+
+    ```bash
+    # frontendディレクトリに移動
+    cd frontend
+
+    # npmパッケージのインストール
+    npm install
+    ```
+
+4.  **アプリケーションの起動:**
+    プロジェクトのルートディレクトリに戻り、`foreman`を使ってバックエンドとフロントエンドを同時に起動します。
+    ```bash
+    cd ..
+    foreman start -f Procfile.dev
+    ```
+    ブラウザで `http://localhost:5173` にアクセスしてください。
+
+## 9. テーブル設計
+
+### users テーブル
+
+| Column             | Type    | Options                   |
+| ------------------ | ------- | ------------------------- |
+| id                 | integer | primary_key, null: false  |
+| name               | string  | null: false               |
+| email              | string  | null: false, unique: true |
+| encrypted_password | string  | null: false               |
+
+#### Association
+
+- has_many :plans
+- has_many :actuals
+
+### plans テーブル
+
+| Column      | Type       | Options                                       |
+| ----------- | ---------- | --------------------------------------------- |
+| id          | integer    | primary_key, null: false                      |
+| memo        | text       |                                               |
+| start_time  | datetime   | null: false                                   |
+| end_time    | datetime   | null: false                                   |
+| user_id     | references | null: false, foreign_key: true(users.id)      |
+| category_id | references | null: false, foreign_key: true(categories.id) |
+
+#### Association
+
+- belongs_to :user
+- belongs_to :category
+
+### actuals テーブル
+
+| Column      | Type       | Options                                       |
+| ----------- | ---------- | --------------------------------------------- |
+| id          | integer    | primary_key, null: false                      |
+| memo        | text       |                                               |
+| start_time  | datetime   | null: false                                   |
+| end_time    | datetime   | null: false                                   |
+| user_id     | references | null: false, foreign_key: true(users.id)      |
+| category_id | references | null: false, foreign_key: true(categories.id) |
+
+#### Association
+
+- belongs_to :user
+- belongs_to :category
+
+### categories テーブル
+
+| Column | Type    | Options                   |
+| ------ | ------- | ------------------------- |
+| id     | integer | primary_key, null: false  |
+| name   | string  | null: false, unique: true |
+
+#### Association
+
+- has_many :plans
+- has_many :actuals

@@ -18,12 +18,12 @@
 
 - **Ruby**: `3.2.0`
 - **Rails**: `7.1.5` (API モード)
-- **データベース**: MySQL
+- **データベース**: MySQL (開発), PostgreSQL (本番)
 - **主要な Gem**:
   - `devise`, `devise-jwt`: トークンベースの API 認証
   - `rspec-rails`: テストフレームワーク
-  - `rack-cors`: CORS（クロスオリジンリソース共有）設定
-  - `jsonapi-serializer`: 安全で一貫性のある JSON レスポンスの生成
+  - `rack-cors`: CORS 設定
+  - `jsonapi-serializer`: JSON レスポンス生成
   - `puma`: Web サーバー
   - `rubocop`, `rubocop-rails`: 静的コード解析・フォーマッター
 
@@ -34,7 +34,13 @@
 - **HTTP クライアント**: Axios
 - **ルーティング**: Vue Router
 - **UI/スタイリング**: Tailwind CSS, Font Awesome
-- **コードフォーマッター**: Prettier
+
+#### インフラ・開発環境
+
+- **デプロイ**: Render (Web Service / Static Site)
+- **コード品質**: RuboCop, Prettier
+- **テスト**: Postman (API エンドポイントテスト), 手動総合テスト
+- **実行環境**: foreman
 
 ### 3. データベーススキーマ
 
@@ -102,52 +108,33 @@ end
 # frozen_string_literal: true
 
 class User < ApplicationRecord
-  # Include default devise modules. Others available are:
-  # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   include Devise::JWT::RevocationStrategies::JTIMatcher
 
   devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable,
-         :jwt_authenticatable, jwt_revocation_strategy: self
+          :recoverable, :rememberable, :validatable,
+          :jwt_authenticatable, jwt_revocation_strategy: self
 
   has_many :plans, dependent: :destroy
   has_many :actuals, dependent: :destroy
 
   validates :name, presence: true
-end
-```
 
-**`plan.rb`**
-
-```ruby
-# frozen_string_literal: true
-
-class Plan < ApplicationRecord
-  belongs_to :user
-  belongs_to :category
-
-  validates :start_time, presence: true
-  validates :end_time, presence: true
-  validates :memo, length: { maximum: 100 }
-  validate :start_time_cannot_be_after_end_time
+  before_create :set_jti
 
   private
 
-  def start_time_cannot_be_after_end_time
-    return if start_time.blank? || end_time.blank?
-    return unless start_time > end_time
-
-    errors.add(:start_time, 'は終了時刻より前に設定してください')
+  def set_jti
+    self.jti ||= SecureRandom.uuid
   end
 end
 ```
 
-**`actual.rb`**
+**`plan.rb` / `actual.rb`**
 
 ```ruby
 # frozen_string_literal: true
 
-class Actual < ApplicationRecord
+class Plan < ApplicationRecord # または Actual
   belongs_to :user
   belongs_to :category
 
@@ -160,9 +147,9 @@ class Actual < ApplicationRecord
 
   def start_time_cannot_be_after_end_time
     return if start_time.blank? || end_time.blank?
-    return unless start_time > end_time
-
-    errors.add(:start_time, 'は終了時刻より前に設定してください')
+    if start_time > end_time
+      errors.add(:start_time, "は終了時刻より前に設定してください")
+    end
   end
 end
 ```
@@ -214,18 +201,33 @@ end
 - **タイムゾーン**: バックエンドは UTC、フロントエンドは JST で管理。
 - **テスト**: Postman による API の動作確認と、ブラウザでの手動総合テストを実施。テストフレームワークとして**RSpec**を導入済み。
 - **コード品質**: `RuboCop`と`Prettier`を導入し、保存時の自動整形を設定することで、コードの品質と一貫性を担保。
+- **デプロイ**:
+  - ホスティングサービスとして**Render**を選定。
+  - バックエンド(Web Service)とフロントエンド(Static Site)を分離してデプロイ。
+  - 本番環境のデータベースには**PostgreSQL**を使用。
+  - 機密情報は**環境変数**で安全に管理。
 
-### 7. 現在の状況と次のタスク
+### 7. 開発の記録と今後のタスク
+
+#### 完了したタスク (MVP)
 
 - **【完了】** ユーザー認証機能 (CRUD)
 - **【完了】** 「予定」管理機能 (CRUD)
 - **【完了】** 「実績」管理機能 (CRUD)
 - **【完了】** 日付またぎ表示の修正
 - **【完了】** バックエンドのバリデーション強化
-- **【TODO】** 以下のロードマップに沿って、デプロイに向けた最終準備を進める。
-  1. **品質向上**: 総合テストの実施、README の整備。
-  2. **デプロイ準備**: 本番環境用データベースの設定、環境変数の設定。
-  3. **デプロイ**: ホスティングサービスを選定し、アプリケーションを公開する。
+- **【完了】** 本番環境へのデプロイ
+
+#### 今後のタスク (MVP 以降)
+
+- レスポンシブ対応
+- 予定遂行度合いを点数化する機能
+- 点数をグラフ表示し点数の推移を可視化する機能
+- 週間/月間カレンダー表示機能
+- ユーザーによるカテゴリ管理機能
+- 予定と実績の時間帯重複チェック機能
+- Google カレンダーと API 連携し「予定」を自動入力する機能
+- 生成 AI の API を活用し AI による行動改善提案機能
 
 ### 8. ペアプログラミングにおけるメンターへの要望 (サポートする上での留意点)
 
